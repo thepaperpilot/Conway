@@ -13,7 +13,7 @@ public class Conway extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture(Gdx.files.internal("assets/badlogic.jpg"));
+		img = new Texture(Gdx.files.internal("badlogic.jpg"));
 	}
 
 	@Override
