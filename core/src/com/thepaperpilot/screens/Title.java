@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.thepaperpilot.Conway;
 
 public class Title extends ConwayScreen {
@@ -42,10 +42,10 @@ public class Title extends ConwayScreen {
 		instructions.setColor(1, 1, 1, 0);
 
 		//Create the stage
-		stage = new Stage(new FillViewport(480, 320));
+		stage = new Stage(new ScreenViewport());
 		Table items = new Table();
 		items.setFillParent(true);
-		items.add(new Image(title)).row().padBottom(10);
+		items.add(new Image(title)).padBottom(10).row();
 		items.add(instructions);
 
 		stage.addActor(items);
@@ -60,7 +60,7 @@ public class Title extends ConwayScreen {
 			instructions.setColor(1, 1, 1, Math.abs(MathUtils.cos(time)));
 
 			if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) || Gdx.input.justTouched()) {
-				//game.setScreen(new Menu(game));
+				game.setScreen(new Menu(game));
 			}
 		}
 
@@ -69,7 +69,6 @@ public class Title extends ConwayScreen {
 
 	@Override
 	public void hide () {
-		Gdx.app.debug("Conway", "dispose title screen");
 		batch.dispose();
 		title.getTexture().dispose();
 	}
