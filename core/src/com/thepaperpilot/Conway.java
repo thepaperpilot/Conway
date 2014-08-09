@@ -11,6 +11,15 @@ public class Conway extends Game {
 	public static AssetManager manager = new AssetManager();
 
 	public static Skin skin;
+	private static Game instance;
+
+	public Conway() {
+		if(instance == null) instance = this;
+	}
+
+	public static Game getGame() {
+		return instance;
+	}
 
 	@Override
 	public void create () {

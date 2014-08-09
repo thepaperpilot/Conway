@@ -1,11 +1,14 @@
 package com.thepaperpilot.screens;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.thepaperpilot.Input;
 
 public abstract class ConwayScreen implements Screen {
 	public Game game;
@@ -20,6 +23,8 @@ public abstract class ConwayScreen implements Screen {
 		items = new Table();
 		items.setFillParent(true);
 		stage.addActor(items);
+
+		Gdx.input.setInputProcessor(new InputMultiplexer(Input.getInstance(), stage));
 	}
 
 	@Override
