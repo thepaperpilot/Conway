@@ -58,10 +58,6 @@ public class Menu extends ConwayScreen {
 				Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
 				cell.live = true;
 			}
-		for(int i = 0; i < 1; i++) {
-			Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
-			cell.live = !cell.live;
-		}
 	}
 
 	@Override

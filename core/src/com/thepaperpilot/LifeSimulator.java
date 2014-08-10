@@ -102,6 +102,10 @@ public class LifeSimulator extends Table {
 		if(getNeighbor(cell, new Vector2(1, 0))) neighbors++;
 		if(getNeighbor(cell, new Vector2(0, -1))) neighbors++;
 		if(getNeighbor(cell, new Vector2(0, 1))) neighbors++;
+		if(getNeighbor(cell, new Vector2(1, 1))) neighbors++;
+		if(getNeighbor(cell, new Vector2(-1, -1))) neighbors++;
+		if(getNeighbor(cell, new Vector2(1, -1))) neighbors++;
+		if(getNeighbor(cell, new Vector2(-1, 1))) neighbors++;
 		return neighbors;
 	}
 
