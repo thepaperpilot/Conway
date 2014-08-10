@@ -1,16 +1,16 @@
 package com.thepaperpilot;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import java.util.ArrayList;
 
 public class GameOfLife extends Table {
 	public static int cellSize = 20;
-	public static ArrayList<Sprite> states;
+	public static ArrayList<Image> states;
 	private final Vector2 size;
 	public Cell[][] grid;
 	float time = 0;
@@ -20,29 +20,43 @@ public class GameOfLife extends Table {
 	private ArrayList<Vector2> targets;
 	//Used for replaying old games
 	private ArrayList<Vector2> initialCells;
-	private ArrayList<Move> moves;
+	private ArrayList<Move> moves = new ArrayList<Move>();
 	private float speed = .02f;
 
 	public GameOfLife(Vector2 size, ArrayList<Vector2> targets, ArrayList<Vector2> initialCells, boolean warping) {
+		if(states == null) {
+			states = new ArrayList<Image>();
+			for(Sprite sprite : Conway.manager.get("states.atlas", TextureAtlas.class).createSprites()) {
+				states.add(new Image(sprite));
+			}
+		}
+
+		this.targets = targets;
+		this.initialCells = initialCells;
 		this.warping = warping;
 		this.size = size;
 		grid = new Cell[(int) size.x][(int) size.y];
-		for(int i = 0; i < grid.length; i++)
-			for(int i2 = 0; i2 < grid[i].length; i2++)
-				grid[i][i2] = new Cell(false, false, new Vector2(i, i2));
-
-		for(Vector2 pos : targets) grid[((int) pos.x)][((int) pos.y)].target = true;
-		for(Vector2 pos : initialCells) grid[((int) pos.x)][((int) pos.y)].live = true;
-
-		if(states == null) {
-			states = new ArrayList<Sprite>();
-			for(Sprite sprite : Conway.manager.get("states.atlas", TextureAtlas.class).createSprites()) {
-				states.add(sprite);
+		for(int i = 0; i < grid.length; i++) {
+			for(int i2 = 0; i2 < grid[i].length; i2++) {
+				grid[i][i2] = new Cell(new Vector2(i, i2), this);
 			}
 		}
+		for(int i = 0; i < grid[i].length; i++) {
+			for(Cell[] row : grid) {
+				add(row[i]).width(cellSize).height(cellSize);
+			}
+			row();
+		}
+
+		for(Vector2 pos : targets) {
+			grid[((int) pos.x)][((int) pos.y)].target = true;
+			grid[((int) pos.x)][((int) pos.y)].setBackground(states.get(7).getDrawable());
+		}
+		for(Vector2 pos : initialCells) grid[((int) pos.x)][((int) pos.y)].live = true;
 	}
 
-	public void update(float delta) {
+	public boolean update(float delta) {
+		boolean stepped = false;
 		time += delta;
 		while(time > speed) {
 			time -= speed;
@@ -51,8 +65,10 @@ public class GameOfLife extends Table {
 			if(anim == 5) {
 				anim = 0;
 				step();
+				stepped = true;
 			}
 		}
+		return stepped;
 	}
 
 	private void step() {
@@ -77,14 +93,20 @@ public class GameOfLife extends Table {
 	}
 
 	private void updateStates() {
-		for(Cell[] row : grid) {
+		Cell[][] next = grid.clone();
+		for(Cell[] row : next) {
 			for(Cell cell : row) {
-				if(cell.live && cell.state != 0)
+				if(cell.live && cell.state != 0) {
 					cell.state--;
-				if(!cell.live && cell.state != 6)
+					cell.updateState();
+				}
+				if(!cell.live && cell.state != 6) {
 					cell.state++;
+					cell.updateState();
+				}
 			}
 		}
+		grid = next;
 	}
 
 	public boolean checkCompletion() {
@@ -95,7 +117,7 @@ public class GameOfLife extends Table {
 	}
 
 	public boolean checkEmpty() {
-		for(Cell[] row : grid)
+		for(Cell[] row : grid.clone())
 			for(Cell cell : row)
 				if(cell.live) return false;
 		return true;
@@ -132,17 +154,6 @@ public class GameOfLife extends Table {
 				y = warping ? 0 : -1;
 		}
 		return !(x == -1 || y == -1) && grid[x][y].live;
-	}
-
-	public void draw(Batch batch, float parentAlpha) {
-		for(int i = 0; i < grid.length; i++) {
-			for(int i2 = 0; i2 < grid[i].length; i2++) {
-				Cell cell = grid[i][i2];
-				if(cell.target)
-					batch.draw(states.get(7), i * cellSize, i2 * cellSize);
-				batch.draw(states.get(cell.state), i * cellSize + 2, i2 * cellSize + 2);
-			}
-		}
 	}
 
 	public void toggle(Cell cell) {

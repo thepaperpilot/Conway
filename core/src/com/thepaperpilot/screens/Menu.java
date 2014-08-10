@@ -34,7 +34,7 @@ public class Menu extends ConwayScreen {
 		start = new TextButton("Play Game", Conway.skin);
 		start.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				//game.setScreen(new GameScreen());
+				game.setScreen(new GameScreen(game));
 			}
 		});
 

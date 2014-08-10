@@ -1,22 +1,40 @@
 package com.thepaperpilot;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-public class Cell {
+public class Cell extends Button{
 	public Vector2 pos;
-	public boolean live;
-	public boolean target;
-	public int state;
+	public boolean live = false;
+	public boolean target = false;
+	public int state = 6;
 	/*
 	States:
 	white, toWhite2, toWhite1, gray, toBlack1, toBlack2, black
 	white = 0, gray = 3, black = 6
 	 */
 
-	public Cell(boolean live, boolean target, Vector2 pos) {
+	public Cell(Vector2 pos, final GameOfLife parent) {
+		super(Conway.skin, "transparent");
 		this.pos = pos;
-		this.live = live;
-		this.target = target;
-		state = live ? 0 : 6;
+		add(new Image(GameOfLife.states.get(state).getDrawable()));
+		addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				parent.toggle(getSelf());
+			}
+		});
+	}
+
+	private Cell getSelf() {
+		return this;
+	}
+
+	public void updateState() {
+		clearChildren();
+		add(new Image(GameOfLife.states.get(state).getDrawable()));
 	}
 }

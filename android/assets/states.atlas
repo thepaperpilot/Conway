@@ -51,3 +51,10 @@ black
   orig: 10, 10
   offset: 0, 0
   index: -1
+target
+  rotate: false
+  xy: 60, 20
+  size: 20, 20
+  orig: 10, 10
+  offset: 1, 1
+  index: -1
