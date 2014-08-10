@@ -57,18 +57,23 @@ public class LifeSimulator extends Table {
 
 	private void step() {
 		step++;
-		for(Cell[] row : grid) {
+		Cell[][] next = grid.clone();
+		for(Cell[] row : grid.clone()) { //making it a local variable speeds up the program
 			for(Cell cell : row) {
 				int neighbors = getNeighbors(cell);
-				if(cell.live) {
-					if(neighbors < 2 || neighbors > 3)
-						cell.live = false;
-				} else {
-					if(neighbors == 3)
-						cell.live = true;
+				switch(neighbors) {
+					default:
+						next[(int) cell.pos.x][(int) cell.pos.y].live = false;
+						break;
+					case 3:
+						next[(int) cell.pos.x][(int) cell.pos.y].live = true;
+						break;
+					case 2:
+						break;
 				}
 			}
 		}
+		grid = next;
 	}
 
 	private void updateStates() {
