@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import java.util.ArrayList;
 
-public class LifeSimulator extends Table {
+public class GameOfLife extends Table {
 	public static int cellSize = 20;
 	public static ArrayList<Sprite> states;
 	private final Vector2 size;
@@ -23,7 +23,7 @@ public class LifeSimulator extends Table {
 	private ArrayList<Move> moves;
 	private float speed = .02f;
 
-	public LifeSimulator(Vector2 size, ArrayList<Vector2> targets, ArrayList<Vector2> initialCells, boolean warping) {
+	public GameOfLife(Vector2 size, ArrayList<Vector2> targets, ArrayList<Vector2> initialCells, boolean warping) {
 		this.warping = warping;
 		this.size = size;
 		grid = new Cell[(int) size.x][(int) size.y];

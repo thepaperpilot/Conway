@@ -11,12 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.thepaperpilot.Cell;
 import com.thepaperpilot.Conway;
-import com.thepaperpilot.LifeSimulator;
+import com.thepaperpilot.GameOfLife;
 
 import java.util.ArrayList;
 
 public class Menu extends ConwayScreen {
-	LifeSimulator background;
+	GameOfLife background;
 	Label title;
 	TextButton start;
 
@@ -26,7 +26,7 @@ public class Menu extends ConwayScreen {
 
 	@Override
 	public void show() {
-		background = new LifeSimulator(new Vector2(MathUtils.ceil(Gdx.graphics.getWidth() / LifeSimulator.cellSize), MathUtils.ceil(Gdx.graphics.getHeight() / LifeSimulator.cellSize)), new ArrayList<Vector2>(), new ArrayList<Vector2>(), false);
+		background = new GameOfLife(new Vector2(MathUtils.ceil(Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(Gdx.graphics.getHeight() / GameOfLife.cellSize)), new ArrayList<Vector2>(), new ArrayList<Vector2>(), false);
 		background.setFillParent(true);
 		title = new Label("Conway's Game of Life\nThe Game", Conway.skin);
 		title.setAlignment(Align.center);
