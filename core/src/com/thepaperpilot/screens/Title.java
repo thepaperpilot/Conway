@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -37,6 +38,7 @@ public class Title extends ConwayScreen {
 		items.add(instructions);
 
 		//Load the rest of the assets
+		Conway.manager.load("states.atlas", TextureAtlas.class);
 	}
 
 	@Override
