@@ -24,13 +24,13 @@ public class Title extends ConwayScreen {
 	@Override
 	public void show() {
 		//Load title screen assets
-		Conway.manager.load("title.png", Texture.class);
+		Conway.manager.load("libgdx.png", Texture.class);
 		Conway.manager.load("textures.json", Skin.class); //TODO make the actual skin
 		Conway.manager.finishLoading();
 
 		//Instantiate title screen assets
 		Conway.skin = Conway.manager.get("textures.json");
-		title = new TextureRegion(new Texture(Gdx.files.internal("title.png")), 0, 0, 256, 256);
+		title = new TextureRegion(new Texture(Gdx.files.internal("libgdx.png")), 0, 0, 240, 76);
 		instructions = new Label("Tap Anywhere to Continue", Conway.skin);
 		instructions.setColor(1, 1, 1, 0);
 
