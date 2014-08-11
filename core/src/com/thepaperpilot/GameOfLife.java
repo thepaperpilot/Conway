@@ -27,7 +27,7 @@ public class GameOfLife {
 	//Used for replaying old games
 	private ArrayList<Vector2> initialCells;
 	private ArrayList<Move> moves = new ArrayList<Move>();
-	private float speed = .005f;
+	private float speed = .05f;
 
 	public GameOfLife(Vector2 size, ArrayList<Vector2> targets, ArrayList<Vector2> initialCells, boolean warping) {
 		this.targets = targets;
