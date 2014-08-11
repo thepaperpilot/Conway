@@ -1,6 +1,5 @@
 package com.thepaperpilot.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
@@ -12,26 +11,19 @@ import com.thepaperpilot.GameOfLife;
 import java.util.ArrayList;
 
 public class GameScreen extends ConwayScreen implements GestureDetector.GestureListener {
-	public GameOfLife game;
+	public final GameOfLife game;
 
-	public GameScreen(Game game) {
-		super(game);
+	public GameScreen(GameOfLife game) {
+		super();
+		this.game = game;
+		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(new GestureDetector(this));
 	}
 
 	@Override
 	public void show() {
-		super.show();
-		ArrayList<Vector2> targets = new ArrayList<Vector2>();
-		ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
-
-		fillSquare(initialCells, new Vector2(2, 2), new Vector2(1, 4));
-		fillSquare(targets, new Vector2(1, 6), new Vector2(3, 2));
-
-		this.game = new GameOfLife(new Vector2(6, 10), targets, initialCells, true);
-		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(new GestureDetector(this));
 	}
 
-	public void fillSquare(ArrayList<Vector2> cells, Vector2 pos, Vector2 size) {
+	public static void fillSquare(ArrayList<Vector2> cells, Vector2 pos, Vector2 size) {
 		for(int i = (int) pos.x; i < pos.x + size.x; i++) {
 			for(int i2 = (int) pos.y; i2 < pos.y + size.y; i2++) {
 				cells.add(new Vector2(i, i2));

@@ -1,6 +1,5 @@
 package com.thepaperpilot.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
@@ -11,13 +10,11 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.thepaperpilot.Input;
 
 public abstract class ConwayScreen implements Screen {
-	public Game game;
 	public SpriteBatch batch;
 	public Stage stage;
 	public Table items;
 
-	public ConwayScreen(Game game) {
-		this.game = game;
+	public ConwayScreen() {
 		batch = new SpriteBatch();
 		items = new Table();
 		items.setFillParent(true);

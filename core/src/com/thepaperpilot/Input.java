@@ -21,7 +21,7 @@ public class Input implements InputProcessor {
 	public boolean keyDown(int keycode) {
 		if(keycode == Keys.BACK){
 			if(Conway.getGame().getScreen() instanceof GameScreen) {
-				Conway.getGame().setScreen(new Menu(Conway.getGame()));
+				Conway.getGame().setScreen(new Menu());
 			} else if(Conway.getGame().getScreen() instanceof Menu) {
 				Gdx.app.exit();
 			}

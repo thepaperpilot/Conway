@@ -1,6 +1,5 @@
 package com.thepaperpilot.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -20,13 +19,8 @@ public class Menu extends ConwayScreen {
 	Label title;
 	TextButton start;
 
-	public Menu(final Game game) {
-		super(game);
-	}
-
-	@Override
-	public void show() {
-		super.show();
+	public Menu() {
+		super();
 		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)), new ArrayList<Vector2>(), new ArrayList<Vector2>(), false);
 		title = new Label("Conway's Game of Life\nThe Game", Conway.skin);
 		title.setAlignment(Align.center);
@@ -34,7 +28,7 @@ public class Menu extends ConwayScreen {
 		start = new TextButton("Play Game", Conway.skin);
 		start.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				game.setScreen(new GameScreen(game));
+				Conway.getGame().setScreen(new GameScreen(random()));
 			}
 		});
 
@@ -47,6 +41,22 @@ public class Menu extends ConwayScreen {
 			Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
 			cell.live = true;
 		}
+	}
+
+	@Override
+	public void show() {
+	}
+
+	public GameOfLife random() {
+		Vector2 size = new Vector2(MathUtils.random(15, 30), MathUtils.random(15, 30));
+		int initial = MathUtils.random(100, 200);
+		ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
+		ArrayList<Vector2> targets = new ArrayList<Vector2>();
+		for(int i = 0; i < initial; i++)
+			initialCells.add(new Vector2(MathUtils.random(size.x), MathUtils.random(size.y)));
+		while(MathUtils.random(targets.size()) < 5)
+			GameScreen.fillSquare(targets, new Vector2(MathUtils.random(size.x - 2), MathUtils.random(size.y - 2)), new Vector2(MathUtils.random(1, 2), MathUtils.random(1, 2)));
+		return new GameOfLife(size, targets, initialCells, MathUtils.randomBoolean());
 	}
 
 	@Override

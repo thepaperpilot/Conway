@@ -1,6 +1,5 @@
 package com.thepaperpilot.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,12 +16,8 @@ public class Title extends ConwayScreen {
 	Label instructions;
 	float time = 0;
 
-	public Title(Game game) {
-		super(game);
-	}
-
-	@Override
-	public void show() {
+	public Title() {
+		super();
 		//Load title screen assets
 		Conway.manager.load("libgdx.png", Texture.class);
 		Conway.manager.load("textures.json", Skin.class); //TODO make the actual skin
@@ -42,13 +37,17 @@ public class Title extends ConwayScreen {
 	}
 
 	@Override
+	public void show() {
+	}
+
+	@Override
 	public void update(float delta) {
 		if(Conway.manager.update()) {
 			time += delta;
 			instructions.setColor(1, 1, 1, Math.abs(MathUtils.cos(time)));
 
 			if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) || Gdx.input.justTouched()) {
-				game.setScreen(new Menu(game));
+				Conway.getGame().setScreen(new Menu());
 			}
 		}
 	}

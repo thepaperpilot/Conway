@@ -23,7 +23,7 @@ public class Conway extends Game {
 
 	@Override
 	public void create() {
-		setScreen(new Title(this));
+		setScreen(new Title());
 	}
 
 	@Override
