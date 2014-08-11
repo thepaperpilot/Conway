@@ -27,7 +27,7 @@ public class GameOfLife {
 	//Used for replaying old games
 	private ArrayList<Vector2> initialCells;
 	private ArrayList<Move> moves = new ArrayList<Move>();
-	private float speed = .05f;
+	private static int speed = 16;
 
 	public GameOfLife(Vector2 size, ArrayList<Vector2> targets, ArrayList<Vector2> initialCells, boolean warping) {
 		this.targets = targets;
@@ -54,11 +54,11 @@ public class GameOfLife {
 	public boolean update(float delta, boolean stepping, boolean fast) {
 		boolean stepped = false;
 		time += delta;
-		while(time > speed) {
-			time -= speed;
+		while(time > .04f) {
+			time -= .04f;
 			updateStates();
 			anim++;
-			if(stepping && (anim >= 5 || fast)) {
+			if(stepping && anim >= (fast ? speed / 4 : speed)) {
 				anim = 0;
 				step();
 				stepped = true;
