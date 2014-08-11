@@ -5,22 +5,46 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.thepaperpilot.Cell;
+import com.thepaperpilot.Conway;
 import com.thepaperpilot.GameOfLife;
 
 import java.util.ArrayList;
 
 public class GameScreen extends ConwayScreen implements GestureDetector.GestureListener {
 	public final GameOfLife game;
+	private boolean stepping = false;
+	private boolean fast = false;
 
-	public GameScreen(GameOfLife game) {
+	public GameScreen(final GameOfLife game) {
 		super();
 		this.game = game;
 		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(new GestureDetector(this));
-	}
-
-	@Override
-	public void show() {
+		final TextButton toggleStepping = new TextButton("Go", Conway.skin);
+		final TextButton stepFastForward = new TextButton("Step", Conway.skin);
+		toggleStepping.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				stepping = !stepping;
+				toggleStepping.setText(stepping ? "Stop" : "Go");
+				stepFastForward.setText(stepping ? fast ? "Slow" : "Fast" : "Step");
+			}
+		});
+		stepFastForward.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if(stepping) {
+					fast = !fast;
+					stepFastForward.setText(fast ? "Slow" : "Fast");
+				} else game.step();
+			}
+		});
+		items.bottom().left();
+		items.add(toggleStepping).pad(2);
+		items.add(stepFastForward).pad(2);
 	}
 
 	public static void fillSquare(ArrayList<Vector2> cells, Vector2 pos, Vector2 size) {
@@ -39,7 +63,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	}
 
 	public void update(float delta) {
-		if(game.update(delta) && game.checkCompletion()) {
+		if(game.update(delta, stepping, fast) && game.checkCompletion()) {
 			//you win!
 		}
 	}

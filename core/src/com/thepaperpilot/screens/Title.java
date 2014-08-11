@@ -46,6 +46,7 @@ public class Title extends ConwayScreen {
 			time += delta;
 			instructions.setColor(1, 1, 1, Math.abs(MathUtils.cos(time)));
 
+
 			if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) || Gdx.input.justTouched()) {
 				Conway.getGame().setScreen(new Menu());
 			}

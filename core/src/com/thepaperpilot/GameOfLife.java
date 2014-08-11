@@ -51,14 +51,14 @@ public class GameOfLife {
 		}
 	}
 
-	public boolean update(float delta) {
+	public boolean update(float delta, boolean stepping, boolean fast) {
 		boolean stepped = false;
 		time += delta;
 		while(time > speed) {
 			time -= speed;
 			updateStates();
 			anim++;
-			if(anim == 5) {
+			if(stepping && (anim >= 5 || fast)) {
 				anim = 0;
 				step();
 				stepped = true;
@@ -67,10 +67,10 @@ public class GameOfLife {
 		return stepped;
 	}
 
-	private void step() {
+	public void step() {
 		step++;
 		Cell[][] next = grid.clone();
-		for(Cell[] row : grid.clone()) { //making it a local variable speeds up the program
+		for(Cell[] row : next) { //making it a local variable speeds up the program
 			for(Cell cell : row) {
 				int neighbors = getNeighbors(cell);
 				switch(neighbors) {
