@@ -60,6 +60,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
 		if(game.getBounds().contains(x, Gdx.graphics.getHeight() - y)) { //TODO this doesn't work when zoomed in
+			Gdx.app.log("Conway", "test");
 			for(Cell[] row : game.grid) {
 				for(Cell cell : row) {
 					if(game.getCellBounds(cell).contains(x, Gdx.graphics.getHeight() - y)) {

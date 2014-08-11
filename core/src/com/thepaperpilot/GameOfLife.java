@@ -147,7 +147,7 @@ public class GameOfLife {
 	}
 
 	public Rectangle getBounds() {
-		return new Rectangle((Gdx.graphics.getWidth() / 2) - (size.x * cellSize) / 2 * zoom + pan.x * zoom, (Gdx.graphics.getHeight() / 2) - (size.y * cellSize) / 2 * zoom + pan.y * zoom, 2 * size.x / zoom, 2 * size.y / zoom);
+		return new Rectangle((Gdx.graphics.getWidth() / 2) - (size.x * cellSize) / 2 * zoom + pan.x * zoom, (Gdx.graphics.getHeight() / 2) - (size.y * cellSize) / 2 * zoom + pan.y * zoom, cellSize * size.x * zoom, cellSize * size.y * zoom);
 	}
 
 	public Rectangle getCellBounds(Cell cell) {
