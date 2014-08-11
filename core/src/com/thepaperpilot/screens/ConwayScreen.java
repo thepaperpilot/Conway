@@ -19,9 +19,9 @@ public abstract class ConwayScreen implements Screen {
 	public ConwayScreen(Game game) {
 		this.game = game;
 		batch = new SpriteBatch();
-		stage = new Stage(new ScreenViewport());
 		items = new Table();
 		items.setFillParent(true);
+		stage = new Stage(new ScreenViewport());
 		stage.addActor(items);
 
 		Gdx.input.setInputProcessor(new InputMultiplexer(Input.getInstance(), stage));

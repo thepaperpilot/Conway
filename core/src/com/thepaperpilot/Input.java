@@ -3,6 +3,8 @@ package com.thepaperpilot;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.thepaperpilot.screens.GameScreen;
+import com.thepaperpilot.screens.Menu;
 
 public class Input implements InputProcessor {
 	private static Input instance = new Input();
@@ -18,11 +20,11 @@ public class Input implements InputProcessor {
 	@Override
 	public boolean keyDown(int keycode) {
 		if(keycode == Keys.BACK){
-			/* TODO Transition back to menu
 			if(Conway.getGame().getScreen() instanceof GameScreen) {
-
+				Conway.getGame().setScreen(new Menu(Conway.getGame()));
+			} else if(Conway.getGame().getScreen() instanceof Menu) {
+				Gdx.app.exit();
 			}
-			*/
 		}
 		return false;
 	}

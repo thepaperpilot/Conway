@@ -26,8 +26,8 @@ public class Menu extends ConwayScreen {
 
 	@Override
 	public void show() {
-		background = new GameOfLife(new Vector2(MathUtils.ceil(Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(Gdx.graphics.getHeight() / GameOfLife.cellSize)), new ArrayList<Vector2>(), new ArrayList<Vector2>(), false);
-		background.setFillParent(true);
+		super.show();
+		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)), new ArrayList<Vector2>(), new ArrayList<Vector2>(), false);
 		title = new Label("Conway's Game of Life\nThe Game", Conway.skin);
 		title.setAlignment(Align.center);
 		title.setColor(1, 0, 0, 1);
@@ -41,7 +41,6 @@ public class Menu extends ConwayScreen {
 		items.add(title).padBottom(40).row();
 		items.add(start);
 
-		stage.addActor(background);
 		stage.getActors().reverse();
 
 		for(int i = 0; i < 1000; i++) {
@@ -58,10 +57,13 @@ public class Menu extends ConwayScreen {
 				Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
 				cell.live = true;
 			}
+
+		background.draw();
 	}
 
 	@Override
 	public void hide() {
 		batch.dispose();
+		background.dispose();
 	}
 }
