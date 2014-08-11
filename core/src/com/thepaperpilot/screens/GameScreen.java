@@ -24,16 +24,16 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		ArrayList<Vector2> targets = new ArrayList<Vector2>();
 		ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
 
-		fillSquare(targets, new Vector2(2, 2), new Vector2(5, 5));
-		fillSquare(initialCells, new Vector2(0, 0), new Vector2(2, 2));
+		fillSquare(initialCells, new Vector2(2, 2), new Vector2(1, 4));
+		fillSquare(targets, new Vector2(1, 6), new Vector2(3, 2));
 
 		this.game = new GameOfLife(new Vector2(6, 10), targets, initialCells, true);
 		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(new GestureDetector(this));
 	}
 
-	public void fillSquare(ArrayList<Vector2> cells, Vector2 pos1, Vector2 pos2) {
-		for(int i = (int) pos1.x; i <= pos2.x - pos1.x; i++) {
-			for(int i2 = (int) pos1.y; i2 <= pos2.y - pos1.y; i2++) {
+	public void fillSquare(ArrayList<Vector2> cells, Vector2 pos, Vector2 size) {
+		for(int i = (int) pos.x; i < pos.x + size.x; i++) {
+			for(int i2 = (int) pos.y; i2 < pos.y + size.y; i2++) {
 				cells.add(new Vector2(i, i2));
 			}
 		}
