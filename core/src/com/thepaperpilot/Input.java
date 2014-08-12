@@ -7,13 +7,13 @@ import com.thepaperpilot.screens.GameScreen;
 import com.thepaperpilot.screens.Menu;
 
 public class Input implements InputProcessor {
-	private static Input instance = new Input();
+	public static Input instance = new Input();
 
 	public static Input getInstance() {
 		return instance;
 	}
 
-	private Input() {
+	public Input() {
 		Gdx.input.setCatchBackKey(true);
 	}
 

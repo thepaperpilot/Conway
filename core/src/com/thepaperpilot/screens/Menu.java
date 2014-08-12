@@ -21,8 +21,9 @@ public class Menu extends ConwayScreen {
 	TextButton random;
 	TextButton creative;
 
-	public Menu() {
-		super();
+	@Override
+	public void show() {
+		super.show();
 		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)), new ArrayList<Vector2>(), new ArrayList<Vector2>(), true);
 		title = new Label("Conway's Game of Life\nThe Game", Conway.skin, "large");
 		title.setAlignment(Align.center);
@@ -127,8 +128,7 @@ public class Menu extends ConwayScreen {
 	}
 
 	@Override
-	public void hide() {
-		batch.dispose();
+	public void dispose() {
 		background.dispose();
 	}
 }

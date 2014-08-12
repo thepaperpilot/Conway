@@ -16,8 +16,9 @@ public class Title extends ConwayScreen {
 	Label instructions;
 	float time = 0;
 
-	public Title() {
-		super();
+	@Override
+	public void show() {
+		super.show();
 		//Load title screen assets
 		Conway.manager.load("libgdx.png", Texture.class);
 		Conway.manager.load("textures.json", Skin.class); //TODO make the actual skin
@@ -37,10 +38,6 @@ public class Title extends ConwayScreen {
 	}
 
 	@Override
-	public void show() {
-	}
-
-	@Override
 	public void update(float delta) {
 		if(Conway.manager.update()) {
 			time += delta;
@@ -51,11 +48,5 @@ public class Title extends ConwayScreen {
 				Conway.getGame().setScreen(new Menu());
 			}
 		}
-	}
-
-	@Override
-	public void hide() {
-		batch.dispose();
-		title.getTexture().dispose();
 	}
 }

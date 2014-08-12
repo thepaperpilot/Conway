@@ -8,14 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.thepaperpilot.screens.Title;
 
 public class Conway extends Game {
-	public static AssetManager manager = new AssetManager();
-
-	public static Skin skin;
 	private static Game instance;
-
-	public Conway() {
-		if(instance == null) instance = this;
-	}
+	public static AssetManager manager;
+	public static Skin skin;
 
 	public static Game getGame() {
 		return instance;
@@ -23,6 +18,9 @@ public class Conway extends Game {
 
 	@Override
 	public void create() {
+		instance = this;
+		manager = new AssetManager();
+		Input.instance = new Input();
 		setScreen(new Title());
 	}
 

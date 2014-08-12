@@ -19,15 +19,23 @@ import java.util.ArrayList;
 
 public class GameScreen extends ConwayScreen implements GestureDetector.GestureListener {
 	public final GameOfLife game;
+	public String objective;
 	private boolean stepping = false;
 	private boolean fast = false;
+	private TextButton toggleStepping;
+	private TextButton stepFastForward;
 
 	public GameScreen(final GameOfLife game, String objective) {
-		super();
 		this.game = game;
+		this.objective = objective;
+	}
+
+	@Override
+	public void show() {
+		super.show();
 		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(new GestureDetector(this));
-		final TextButton toggleStepping = new TextButton("Go", Conway.skin);
-		final TextButton stepFastForward = new TextButton("Step", Conway.skin);
+		toggleStepping = new TextButton("Go", Conway.skin);
+		stepFastForward = new TextButton("Step", Conway.skin);
 		toggleStepping.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -58,6 +66,13 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		items.bottom().left();
 		items.add(toggleStepping).pad(2);
 		items.add(stepFastForward).pad(2);
+	}
+
+	@Override
+	public void pause() {
+		stepping = false;
+		toggleStepping.setText("Go");
+		stepFastForward.setText("Step");
 	}
 
 	public static void fillSquare(ArrayList<Vector2> cells, Vector2 pos, Vector2 size) {
@@ -136,8 +151,8 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	}
 
 	@Override
-	public void hide() {
-		game.dispose();
+	public void dispose() {
 		super.dispose();
+		game.dispose();
 	}
 }

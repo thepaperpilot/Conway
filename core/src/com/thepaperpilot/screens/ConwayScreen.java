@@ -14,7 +14,12 @@ public abstract class ConwayScreen implements Screen {
 	public Stage stage;
 	public Table items;
 
-	public ConwayScreen() {
+	@Override
+	public void resize(int width, int height) {
+	}
+
+	@Override
+	public void show() {
 		batch = new SpriteBatch();
 		items = new Table();
 		items.setFillParent(true);
@@ -22,14 +27,6 @@ public abstract class ConwayScreen implements Screen {
 		stage.addActor(items);
 
 		Gdx.input.setInputProcessor(new InputMultiplexer(Input.getInstance(), stage));
-	}
-
-	@Override
-	public void resize(int width, int height) {
-	}
-
-	@Override
-	public void show() {
 	}
 
 	@Override
@@ -55,5 +52,7 @@ public abstract class ConwayScreen implements Screen {
 
 	@Override
 	public void dispose() {
+		batch.dispose();
+		stage.dispose();
 	}
 }
