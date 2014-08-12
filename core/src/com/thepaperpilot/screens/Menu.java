@@ -28,7 +28,7 @@ public class Menu extends ConwayScreen {
 		start = new TextButton("Play\nGame", Conway.skin, "button");
 		start.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				Conway.getGame().setScreen(new GameScreen(random()));
+				Conway.getGame().setScreen(new GameScreen(creative()));
 			}
 		});
 
@@ -57,6 +57,10 @@ public class Menu extends ConwayScreen {
 		while(MathUtils.random(targets.size()) < 5)
 			GameScreen.fillSquare(targets, new Vector2(MathUtils.random(size.x - 2), MathUtils.random(size.y - 2)), new Vector2(MathUtils.random(1, 2), MathUtils.random(1, 2)));
 		return new GameOfLife(size, targets, initialCells, MathUtils.randomBoolean());
+	}
+
+	public GameOfLife creative() {
+		return new GameOfLife(new Vector2(100, 100), new ArrayList<Vector2>(), new ArrayList<Vector2>(), true);
 	}
 
 	@Override

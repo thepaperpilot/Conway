@@ -75,14 +75,19 @@ public class GameOfLife {
 				int neighbors = getNeighbors(cell);
 				switch(neighbors) {
 					default:
-						next[(int) cell.pos.x][(int) cell.pos.y].live = false;
+						next[(int) cell.pos.x][(int) cell.pos.y].next = false;
 						break;
 					case 3:
-						next[(int) cell.pos.x][(int) cell.pos.y].live = true;
+						next[(int) cell.pos.x][(int) cell.pos.y].next = true;
 						break;
 					case 2:
 						break;
 				}
+			}
+		}
+		for(Cell[] row : next) {
+			for(Cell cell : row) {
+				cell.update();
 			}
 		}
 		grid = next;
@@ -174,6 +179,7 @@ public class GameOfLife {
 
 	public void toggle(Cell cell) {
 		cell.live = !cell.live;
+		cell.next = cell.live;
 		moves.add(new Move(cell.pos.cpy(), step));
 	}
 
