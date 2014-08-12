@@ -3,9 +3,11 @@ package com.thepaperpilot.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -52,7 +54,10 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 				if(stepping) {
 					fast = !fast;
 					stepFastForward.setText(fast ? "Slow" : "Fast");
-				} else game.step();
+				} else {
+					game.step();
+					if(game.checkCompletion()) win();
+				}
 			}
 		});
 		if(objective != null) {
@@ -89,14 +94,50 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	@Override
 	public void render(float delta) {
 		update(delta);
+		stage.act(delta);
 		game.draw();
 		stage.draw();
 	}
 
 	public void update(float delta) {
-		if(game.update(delta, stepping, fast) && game.checkCompletion()) {
-			//you win!
-		}
+		if(game.update(delta, stepping, fast) && game.checkCompletion()) win();
+	}
+
+	private void win() {
+		Table victory = new Table();
+		victory.setTransform(true);
+		victory.setCenterPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 2 / 3);
+		victory.setColor(1, 1, 1, 0);
+		victory.setScale(.5f);
+		final Table buttons = new Table();
+		buttons.setCenterPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 3);
+		TextButton menu = new TextButton("Back to Menu", Conway.skin);
+		menu.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				Conway.getGame().setScreen(new Menu());
+			}
+		});
+		TextButton next = new TextButton("Next Level", Conway.skin);
+		TextButton replay = new TextButton("Save Replay", Conway.skin);
+		buttons.add(menu).pad(10);
+		buttons.add(next).pad(10);
+		buttons.add(replay).pad(10);
+		buttons.setColor(1, 1, 1, 0);
+		victory.addAction(Actions.sequence(Actions.parallel(Actions.scaleBy(2, 2, 2, Interpolation.elastic), Actions.fadeIn(2)), Actions.run(new Runnable() {
+			@Override
+			public void run() {
+				stage.addActor(buttons);
+				buttons.addAction(Actions.fadeIn(2));
+			}
+		})));
+		Label you = new Label("You", Conway.skin, "large");
+		Label win = new Label("Win!", Conway.skin, "large");
+		you.addAction(Actions.moveBy(-Gdx.graphics.getWidth() / 9, 0, 4, Interpolation.bounce));
+		win.addAction(Actions.moveBy(Gdx.graphics.getWidth() / 9, 0, 4, Interpolation.bounce));
+		victory.add(you).row();
+		victory.add(win);
+		stage.addActor(victory);
 	}
 
 	@Override
