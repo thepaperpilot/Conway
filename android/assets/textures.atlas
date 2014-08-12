@@ -2,16 +2,9 @@ textures.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-textButtonDown
-  rotate: false
-  xy: 98, 2
-  size: 94, 94
-  orig: 100, 100
-  offset: 3, 3
-  index: -1
 buttonUp
   rotate: false
-  xy: 194, 2
+  xy: 18, 2
   size: 14, 14
   split: 4, 4, 4, 4
   orig: 14, 14
@@ -19,16 +12,9 @@ buttonUp
   index: -1
 buttonDown
   rotate: false
-  xy: 194, 18
+  xy: 2, 2
   size: 14, 14
   split: 4, 4, 4, 4
   orig: 14, 14
   offset: 0, 0
-  index: -1
-textButtonUp
-  rotate: false
-  xy: 2, 2
-  size: 94, 94
-  orig: 100, 100
-  offset: 3, 3
   index: -1

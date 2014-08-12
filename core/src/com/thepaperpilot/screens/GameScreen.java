@@ -36,6 +36,8 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(new GestureDetector(this));
 		toggleStepping = new TextButton("Go", Conway.skin);
 		stepFastForward = new TextButton("Step", Conway.skin);
+		toggleStepping.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
+		stepFastForward.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		toggleStepping.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -58,6 +60,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 			objectiveTable.setFillParent(true);
 			Table innerObjectiveTable = new Table();
 			innerObjectiveTable.setBackground(Conway.skin.get("buttonUp", Drawable.class));
+			innerObjectiveTable.pad(5, 10, 5, 10);
 			Label objectiveLabel = new Label(objective, Conway.skin);
 			innerObjectiveTable.add(objectiveLabel);
 			objectiveTable.top().add(innerObjectiveTable);

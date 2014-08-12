@@ -28,13 +28,15 @@ public class Menu extends ConwayScreen {
 		title = new Label("Conway's Game of Life\nThe Game", Conway.skin, "large");
 		title.setAlignment(Align.center);
 		title.setColor(1, 0, 0, 1);
-		random = new TextButton("Random\nGame", Conway.skin, "button");
+		random = new TextButton("Random\nGame", Conway.skin);
+		random.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		random.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				Conway.getGame().setScreen(new GameScreen(random(), objective));
 			}
 		});
-		creative = new TextButton("Creative", Conway.skin, "button");
+		creative = new TextButton("Creative", Conway.skin);
+		creative.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		creative.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				Conway.getGame().setScreen(new GameScreen(creative(), objective));

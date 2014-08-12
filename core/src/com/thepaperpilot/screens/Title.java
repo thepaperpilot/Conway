@@ -26,6 +26,8 @@ public class Title extends ConwayScreen {
 
 		//Instantiate title screen assets
 		Conway.skin = Conway.manager.get("textures.json");
+		Conway.skin.getFont("font").setScale(Gdx.graphics.getWidth() / 500f);
+		Conway.skin.getFont("large").setScale(Gdx.graphics.getWidth() / 500f);
 		title = new TextureRegion(new Texture(Gdx.files.internal("libgdx.png")), 0, 0, 240, 76);
 		instructions = new Label("Tap Anywhere to Continue", Conway.skin);
 		instructions.setColor(1, 1, 1, 0);

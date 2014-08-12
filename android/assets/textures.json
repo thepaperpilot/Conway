@@ -11,8 +11,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	transparent: { }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
-	default: { down: textButtonDown, up: textButtonUp, font: font, fontColor: white },
-	button: { down: buttonDown, up: buttonUp, font: font, fontColor: white }
+	default: { down: buttonDown, up: buttonUp, font: font, fontColor: white, downFontColor: black },
+	large: { down: buttonDown, up: buttonUp, font: large, fontColor: white, downFontColor: black },
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: { font: font, fontColor: white },
