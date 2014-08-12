@@ -47,7 +47,7 @@ public class Title extends ConwayScreen {
 
 
 			if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) || Gdx.input.justTouched()) {
-				Conway.getGame().setScreen(new Menu());
+				transition(new Menu());
 			}
 		}
 	}

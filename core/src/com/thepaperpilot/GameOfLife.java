@@ -105,13 +105,6 @@ public class GameOfLife {
 		return false;
 	}
 
-	public boolean checkEmpty() {
-		for(Cell[] row : grid)
-			for(Cell cell : row)
-				if(cell.live) return false;
-		return true;
-	}
-
 	private int getNeighbors(Cell cell) {
 		int neighbors = 0;
 		if(checkNeighbor(cell, new Vector2(-1, 0))) neighbors++;
@@ -153,13 +146,14 @@ public class GameOfLife {
 		return new Rectangle((Gdx.graphics.getWidth() / 2) - (size.x * cellSize) / 2 * zoom + (pan.x + cellSize * cell.pos.x) * zoom, (Gdx.graphics.getHeight() / 2) - (size.y * cellSize) / 2 * zoom + (pan.y + cellSize * cell.pos.y) * zoom, cellSize * zoom, cellSize * zoom);
 	}
 
-	public void draw() {
+	public void draw(float alpha) {
 		Matrix4 transform = new Matrix4();
 		transform.translate((Gdx.graphics.getWidth() - (zoom * size.x * GameOfLife.cellSize)) / 2, (Gdx.graphics.getHeight() - (zoom * size.y * GameOfLife.cellSize)) / 2, 0);
 		transform.scl(zoom);
 		transform.translate(pan);
 		batch.setTransformMatrix(transform);
 		batch.begin();
+		batch.setColor(1, 1, 1, alpha);
 		for(int i = 0; i < grid.length; i++) {
 			for(int i2 = 0; i2 < grid[i].length; i2++) {
 				Cell cell = grid[i][i2];

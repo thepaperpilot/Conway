@@ -32,14 +32,14 @@ public class Menu extends ConwayScreen {
 		random.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		random.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				Conway.getGame().setScreen(new GameScreen(random(), objective));
+				transition(new GameScreen(random(), objective));
 			}
 		});
 		creative = new TextButton("Creative", Conway.skin);
 		creative.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		creative.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				Conway.getGame().setScreen(new GameScreen(creative(), objective));
+				transition(new GameScreen(creative(), objective));
 			}
 		});
 
@@ -78,7 +78,7 @@ public class Menu extends ConwayScreen {
 					}
 				};
 			case 1:
-				final int target = MathUtils.random(50, 100);
+				final int target = MathUtils.random(30, 50);
 				objective = "Reach a population of " + target;
 				return new GameOfLife(size, new ArrayList<Vector2>(), initialCells, MathUtils.randomBoolean()) {
 					@Override
@@ -126,7 +126,7 @@ public class Menu extends ConwayScreen {
 			Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
 			cell.live = true;
 		}
-		background.draw();
+		background.draw(transition == null ? 1 : reverse ? 1f - transition.getTime() : transition.getTime());
 	}
 
 	@Override

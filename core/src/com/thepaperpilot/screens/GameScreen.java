@@ -95,7 +95,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	public void render(float delta) {
 		update(delta);
 		stage.act(delta);
-		game.draw();
+		game.draw(transition == null ? 1 : reverse ? 1f - transition.getTime() : transition.getTime());
 		stage.draw();
 	}
 
@@ -104,6 +104,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	}
 
 	private void win() {
+		stepping = false;
 		Table victory = new Table();
 		victory.setTransform(true);
 		victory.setCenterPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 2 / 3);
@@ -115,13 +116,13 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		menu.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				Conway.getGame().setScreen(new Menu());
+				transition(new Menu());
 			}
 		});
 		TextButton next = new TextButton("Next Level", Conway.skin);
 		TextButton replay = new TextButton("Save Replay", Conway.skin);
-		buttons.add(menu).pad(10);
-		buttons.add(next).pad(10);
+		buttons.add(menu).pad(10).row();
+		buttons.add(next).pad(10).row();
 		buttons.add(replay).pad(10);
 		buttons.setColor(1, 1, 1, 0);
 		victory.addAction(Actions.sequence(Actions.parallel(Actions.scaleBy(2, 2, 2, Interpolation.elastic), Actions.fadeIn(2)), Actions.run(new Runnable() {
