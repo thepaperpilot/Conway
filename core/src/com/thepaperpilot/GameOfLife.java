@@ -23,7 +23,7 @@ public class GameOfLife {
 	int anim = 0;
 	public int step = 0;
 	private boolean warping;
-	private ArrayList<Vector2> targets;
+	public ArrayList<Vector2> targets;
 	//Used for replaying old games
 	private ArrayList<Vector2> initialCells;
 	private ArrayList<Move> moves = new ArrayList<Move>();
@@ -102,10 +102,7 @@ public class GameOfLife {
 	}
 
 	public boolean checkCompletion() {
-		for(Vector2 pos : targets)
-			if(grid[(int) pos.x][(int) pos.y].live)
-				return false;
-		return true;
+		return false;
 	}
 
 	public boolean checkEmpty() {

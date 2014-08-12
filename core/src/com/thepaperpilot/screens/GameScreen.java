@@ -6,8 +6,11 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.thepaperpilot.Cell;
 import com.thepaperpilot.Conway;
 import com.thepaperpilot.GameOfLife;
@@ -19,7 +22,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	private boolean stepping = false;
 	private boolean fast = false;
 
-	public GameScreen(final GameOfLife game) {
+	public GameScreen(final GameOfLife game, String objective) {
 		super();
 		this.game = game;
 		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(new GestureDetector(this));
@@ -42,6 +45,16 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 				} else game.step();
 			}
 		});
+		if(objective != null) {
+			Table objectiveTable = new Table();
+			objectiveTable.setFillParent(true);
+			Table innerObjectiveTable = new Table();
+			innerObjectiveTable.setBackground(Conway.skin.get("buttonUp", Drawable.class));
+			Label objectiveLabel = new Label(objective, Conway.skin);
+			innerObjectiveTable.add(objectiveLabel);
+			objectiveTable.top().add(innerObjectiveTable);
+			stage.addActor(objectiveTable);
+		}
 		items.bottom().left();
 		items.add(toggleStepping).pad(2);
 		items.add(stepFastForward).pad(2);

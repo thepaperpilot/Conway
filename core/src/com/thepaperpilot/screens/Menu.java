@@ -15,9 +15,11 @@ import com.thepaperpilot.GameOfLife;
 import java.util.ArrayList;
 
 public class Menu extends ConwayScreen {
+	String objective;
 	GameOfLife background;
 	Label title;
-	TextButton start;
+	TextButton random;
+	TextButton creative;
 
 	public Menu() {
 		super();
@@ -25,15 +27,22 @@ public class Menu extends ConwayScreen {
 		title = new Label("Conway's Game of Life\nThe Game", Conway.skin, "large");
 		title.setAlignment(Align.center);
 		title.setColor(1, 0, 0, 1);
-		start = new TextButton("Play\nGame", Conway.skin, "button");
-		start.addListener(new ClickListener() {
+		random = new TextButton("Random\nGame", Conway.skin, "button");
+		random.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				Conway.getGame().setScreen(new GameScreen(creative()));
+				Conway.getGame().setScreen(new GameScreen(random(), objective));
+			}
+		});
+		creative = new TextButton("Creative", Conway.skin, "button");
+		creative.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				Conway.getGame().setScreen(new GameScreen(creative(), objective));
 			}
 		});
 
 		items.add(title).padBottom(40).row();
-		items.add(start);
+		items.add(random).padBottom(10).row();
+		items.add(creative);
 
 		stage.getActors().reverse();
 
@@ -41,10 +50,6 @@ public class Menu extends ConwayScreen {
 			Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
 			cell.live = true;
 		}
-	}
-
-	@Override
-	public void show() {
 	}
 
 	public GameOfLife random() {
@@ -56,7 +61,55 @@ public class Menu extends ConwayScreen {
 			initialCells.add(new Vector2(MathUtils.random(size.x), MathUtils.random(size.y)));
 		while(MathUtils.random(targets.size()) < 5)
 			GameScreen.fillSquare(targets, new Vector2(MathUtils.random(size.x - 2), MathUtils.random(size.y - 2)), new Vector2(MathUtils.random(1, 2), MathUtils.random(1, 2)));
-		return new GameOfLife(size, targets, initialCells, MathUtils.randomBoolean());
+		switch(MathUtils.random(3)) {
+			default:
+				objective = "Kill the entire population";
+				return new GameOfLife(size, new ArrayList<Vector2>(), initialCells, MathUtils.randomBoolean()) {
+					@Override
+					public boolean checkCompletion() {
+						for(Cell[] row : grid)
+							for(Cell cell : row)
+								if(cell.live)
+									return false;
+						return  true;
+					}
+				};
+			case 1:
+				final int target = MathUtils.random(50, 100);
+				objective = "Reach a population of " + target;
+				return new GameOfLife(size, new ArrayList<Vector2>(), initialCells, MathUtils.randomBoolean()) {
+					@Override
+					public boolean checkCompletion() {
+						int pop = 0;
+						for(Vector2 pos : targets)
+							if(grid[(int) pos.x][(int) pos.y].live)
+								pop++;
+						return pop >= target;
+					}
+				};
+			case 2:
+				objective = "Kill all targets";
+				return new GameOfLife(size, targets, initialCells, MathUtils.randomBoolean()) {
+					@Override
+					public boolean checkCompletion() {
+						for(Vector2 pos : targets)
+							if(grid[(int) pos.x][(int) pos.y].live)
+								return false;
+						return true;
+					}
+				};
+			case 3:
+				objective = "Populate all targets";
+				return new GameOfLife(size, targets, initialCells, MathUtils.randomBoolean()) {
+					@Override
+					public boolean checkCompletion() {
+						for(Vector2 pos : targets)
+							if(!grid[(int) pos.x][(int) pos.y].live)
+								return false;
+						return true;
+					}
+				};
+		}
 	}
 
 	public GameOfLife creative() {
