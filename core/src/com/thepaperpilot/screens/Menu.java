@@ -21,7 +21,7 @@ public class Menu extends ConwayScreen {
 
 	public Menu() {
 		super();
-		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)), new ArrayList<Vector2>(), new ArrayList<Vector2>(), false);
+		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)), new ArrayList<Vector2>(), new ArrayList<Vector2>(), true);
 		title = new Label("Conway's Game of Life\nThe Game", Conway.skin, "large");
 		title.setAlignment(Align.center);
 		title.setColor(1, 0, 0, 1);
@@ -66,12 +66,10 @@ public class Menu extends ConwayScreen {
 	@Override
 	public void update(float delta) {
 		background.update(delta, true, true);
-		if(background.checkEmpty())
-			for(int i = 0; i < 1000; i++) {
-				Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
-				cell.live = true;
-			}
-
+		for(int i = 0; i < 10; i++) {
+			Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
+			cell.live = true;
+		}
 		background.draw();
 	}
 

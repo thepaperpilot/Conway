@@ -21,7 +21,7 @@ public class GameOfLife {
 	SpriteBatch batch;
 	float time = 0;
 	int anim = 0;
-	int step = 0;
+	public int step = 0;
 	private boolean warping;
 	private ArrayList<Vector2> targets;
 	//Used for replaying old games
@@ -68,29 +68,26 @@ public class GameOfLife {
 	}
 
 	public void step() {
-		step++;
-		Cell[][] next = grid.clone();
-		for(Cell[] row : next) { //making it a local variable speeds up the program
+		for(Cell[] row : grid.clone()) { //making it a local variable speeds up the program
 			for(Cell cell : row) {
 				int neighbors = getNeighbors(cell);
 				switch(neighbors) {
 					default:
-						next[(int) cell.pos.x][(int) cell.pos.y].next = false;
+						grid[(int) cell.pos.x][(int) cell.pos.y].next = false;
 						break;
 					case 3:
-						next[(int) cell.pos.x][(int) cell.pos.y].next = true;
+						grid[(int) cell.pos.x][(int) cell.pos.y].next = true;
 						break;
 					case 2:
 						break;
 				}
 			}
 		}
-		for(Cell[] row : next) {
+		for(Cell[] row : grid) {
 			for(Cell cell : row) {
 				cell.update();
 			}
 		}
-		grid = next;
 	}
 
 	private void updateStates() {
