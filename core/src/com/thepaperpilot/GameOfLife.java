@@ -14,13 +14,13 @@ import java.util.ArrayList;
 public class GameOfLife {
 	public static final int cellSize = 200;
 	private static ArrayList<Sprite> states;
-	public Vector2 size;
-	public Cell[][] grid;
+	public final Cell[][] grid;
 	public final Vector3 pan = new Vector3(0, 0, 0);
+	private final SpriteBatch batch;
+	public Vector2 size;
 	public Objective objective;
-	private SpriteBatch batch;
-	private boolean warping = true;
 	public float zoom = .1f;
+	private boolean warping = true;
 	private float time = 0;
 	private int anim = 0;
 
@@ -176,12 +176,8 @@ public class GameOfLife {
 	}
 
 	public static class Objective {
+		final Cell[][] grid;
 		public String objective = "";
-		Cell[][] grid;
-
-		public boolean checkCompletion() {
-			return false;
-		}
 
 		public Objective(String objective, Cell[][] grid) {
 			this.objective = objective;
@@ -223,6 +219,10 @@ public class GameOfLife {
 						return true;
 					}
 				};
+		}
+
+		public boolean checkCompletion() {
+			return false;
 		}
 	}
 }

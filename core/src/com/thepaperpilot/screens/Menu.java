@@ -86,7 +86,8 @@ public class Menu extends ConwayScreen {
 	}
 
 	@Override
-	public void dispose() {
+	public void hide() {
+		super.hide();
 		background.dispose();
 	}
 

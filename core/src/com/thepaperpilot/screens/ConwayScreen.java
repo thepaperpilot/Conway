@@ -54,6 +54,8 @@ abstract class ConwayScreen implements Screen {
 
 	@Override
 	public void hide() {
+		batch.dispose();
+		stage.dispose();
 	}
 
 	@Override
@@ -76,7 +78,5 @@ abstract class ConwayScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		batch.dispose();
-		stage.dispose();
 	}
 }

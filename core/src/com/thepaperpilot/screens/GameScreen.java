@@ -200,8 +200,8 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	}
 
 	@Override
-	public void dispose() {
-		super.dispose();
+	public void hide() {
+		super.hide();
 		game.dispose();
 	}
 }
