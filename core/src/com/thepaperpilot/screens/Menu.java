@@ -15,27 +15,24 @@ import com.thepaperpilot.GameOfLife;
 import java.util.ArrayList;
 
 public class Menu extends ConwayScreen {
-	String objective;
-	GameOfLife background;
-	Label title;
-	TextButton random;
-	TextButton creative;
+	private String objective;
+	private GameOfLife background;
 
 	@Override
 	public void show() {
 		super.show();
 		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)), new ArrayList<Vector2>(), new ArrayList<Vector2>(), true);
-		title = new Label("Conway's Game of Life\nThe Game", Conway.skin, "large");
+		Label title = new Label("Conway's Game of Life\nThe Game", Conway.skin, "large");
 		title.setAlignment(Align.center);
 		title.setColor(1, 0, 0, 1);
-		random = new TextButton("Random\nGame", Conway.skin);
+		TextButton random = new TextButton("Random\nGame", Conway.skin);
 		random.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		random.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				transition(new GameScreen(random(), objective));
 			}
 		});
-		creative = new TextButton("Creative", Conway.skin);
+		TextButton creative = new TextButton("Creative", Conway.skin);
 		creative.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		creative.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
@@ -55,7 +52,7 @@ public class Menu extends ConwayScreen {
 		}
 	}
 
-	public GameOfLife random() {
+	GameOfLife random() {
 		Vector2 size = new Vector2(MathUtils.random(15, 30), MathUtils.random(15, 30));
 		int initial = MathUtils.random(100, 200);
 		ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
@@ -74,7 +71,7 @@ public class Menu extends ConwayScreen {
 							for(Cell cell : row)
 								if(cell.live)
 									return false;
-						return  true;
+						return true;
 					}
 				};
 			case 1:
@@ -115,7 +112,7 @@ public class Menu extends ConwayScreen {
 		}
 	}
 
-	public GameOfLife creative() {
+	GameOfLife creative() {
 		return new GameOfLife(new Vector2(100, 100), new ArrayList<Vector2>(), new ArrayList<Vector2>(), true);
 	}
 

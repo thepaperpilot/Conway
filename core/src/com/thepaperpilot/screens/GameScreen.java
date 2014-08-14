@@ -20,8 +20,8 @@ import com.thepaperpilot.GameOfLife;
 import java.util.ArrayList;
 
 public class GameScreen extends ConwayScreen implements GestureDetector.GestureListener {
-	public final GameOfLife game;
-	public String objective;
+	private final GameOfLife game;
+	private final String objective;
 	private boolean stepping = false;
 	private boolean fast = false;
 	private TextButton toggleStepping;
@@ -31,6 +31,14 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	public GameScreen(final GameOfLife game, String objective) {
 		this.game = game;
 		this.objective = objective;
+	}
+
+	public static void fillSquare(ArrayList<Vector2> cells, Vector2 pos, Vector2 size) {
+		for(int i = (int) pos.x; i < pos.x + size.x; i++) {
+			for(int i2 = (int) pos.y; i2 < pos.y + size.y; i2++) {
+				cells.add(new Vector2(i, i2));
+			}
+		}
 	}
 
 	@Override
@@ -88,14 +96,6 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		stepFastForward.setText("Step");
 	}
 
-	public static void fillSquare(ArrayList<Vector2> cells, Vector2 pos, Vector2 size) {
-		for(int i = (int) pos.x; i < pos.x + size.x; i++) {
-			for(int i2 = (int) pos.y; i2 < pos.y + size.y; i2++) {
-				cells.add(new Vector2(i, i2));
-			}
-		}
-	}
-
 	@Override
 	public void render(float delta) {
 		update(delta);
@@ -104,7 +104,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		stage.draw();
 	}
 
-	public void update(float delta) {
+	void update(float delta) {
 		if(game.update(delta, stepping, fast) && game.checkCompletion()) win();
 	}
 

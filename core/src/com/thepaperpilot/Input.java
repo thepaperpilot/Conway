@@ -9,17 +9,17 @@ import com.thepaperpilot.screens.Menu;
 public class Input implements InputProcessor {
 	public static Input instance = new Input();
 
-	public static Input getInstance() {
-		return instance;
-	}
-
 	public Input() {
 		Gdx.input.setCatchBackKey(true);
 	}
 
+	public static Input getInstance() {
+		return instance;
+	}
+
 	@Override
 	public boolean keyDown(int keycode) {
-		if(keycode == Keys.BACK){
+		if(keycode == Keys.BACK) {
 			if(Conway.getGame().getScreen() instanceof GameScreen) {
 				Conway.getGame().setScreen(new Menu());
 			} else if(Conway.getGame().getScreen() instanceof Menu) {

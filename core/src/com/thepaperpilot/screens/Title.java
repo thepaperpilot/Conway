@@ -12,9 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.thepaperpilot.Conway;
 
 public class Title extends ConwayScreen {
-	TextureRegion title;
-	Label instructions;
-	float time = 0;
+	private Label instructions;
+	private float time = 0;
 
 	@Override
 	public void show() {
@@ -28,7 +27,7 @@ public class Title extends ConwayScreen {
 		Conway.skin = Conway.manager.get("textures.json");
 		Conway.skin.getFont("font").setScale(Gdx.graphics.getWidth() / 500f);
 		Conway.skin.getFont("large").setScale(Gdx.graphics.getWidth() / 500f);
-		title = new TextureRegion(new Texture(Gdx.files.internal("libgdx.png")), 0, 0, 240, 76);
+		TextureRegion title = new TextureRegion(new Texture(Gdx.files.internal("libgdx.png")), 0, 0, 240, 76);
 		instructions = new Label("Tap Anywhere to Continue", Conway.skin);
 		instructions.setColor(1, 1, 1, 0);
 

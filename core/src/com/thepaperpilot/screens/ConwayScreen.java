@@ -12,12 +12,12 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.thepaperpilot.Conway;
 import com.thepaperpilot.Input;
 
-public abstract class ConwayScreen implements Screen {
-	public SpriteBatch batch;
-	public Stage stage;
-	public Table items;
-	public TemporalAction transition;
-	public boolean reverse = false;
+abstract class ConwayScreen implements Screen {
+	Stage stage;
+	Table items;
+	TemporalAction transition;
+	boolean reverse = false;
+	private SpriteBatch batch;
 
 	@Override
 	public void resize(int width, int height) {
@@ -40,7 +40,7 @@ public abstract class ConwayScreen implements Screen {
 		Gdx.input.setInputProcessor(new InputMultiplexer(Input.getInstance(), stage));
 	}
 
-	public void transition(final ConwayScreen screen) {
+	void transition(final ConwayScreen screen) {
 		reverse = true;
 		stage.addAction(Actions.sequence(transition = Actions.fadeOut(.5f), Actions.run(new Runnable() {
 			@Override
@@ -71,7 +71,7 @@ public abstract class ConwayScreen implements Screen {
 		stage.draw();
 	}
 
-	public void update(float delta) {
+	void update(float delta) {
 	}
 
 	@Override

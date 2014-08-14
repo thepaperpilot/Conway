@@ -12,19 +12,17 @@ import com.badlogic.gdx.math.Vector3;
 import java.util.ArrayList;
 
 public class GameOfLife {
-	public static int cellSize = 200;
-	public static ArrayList<Sprite> states;
+	public static final int cellSize = 200;
+	private static ArrayList<Sprite> states;
 	public final Vector2 size;
-	public Cell[][] grid;
+	public final Cell[][] grid;
+	public final Vector3 pan = new Vector3(0, 0, 0);
+	public final ArrayList<Vector2> targets;
+	private final SpriteBatch batch;
+	private final boolean warping;
 	public float zoom = .1f;
-	public Vector3 pan = new Vector3(0, 0, 0);
-	SpriteBatch batch;
-	float time = 0;
-	int anim = 0;
-	public int step = 0;
-	private boolean warping;
-	public ArrayList<Vector2> targets;
-	private static int speed = 16;
+	private float time = 0;
+	private int anim = 0;
 
 	public GameOfLife(Vector2 size, ArrayList<Vector2> targets, ArrayList<Vector2> initialCells, boolean warping) {
 		this.targets = targets;
@@ -34,7 +32,7 @@ public class GameOfLife {
 		grid = new Cell[(int) size.x][(int) size.y];
 		for(int i = 0; i < grid.length; i++)
 			for(int i2 = 0; i2 < grid[i].length; i2++)
-				grid[i][i2] = new Cell(false, false, new Vector2(i, i2));
+				grid[i][i2] = new Cell(new Vector2(i, i2));
 
 		for(Vector2 pos : targets) grid[((int) pos.x)][((int) pos.y)].target = true;
 		for(Vector2 pos : initialCells) grid[((int) pos.x)][((int) pos.y)].live = true;
@@ -54,6 +52,7 @@ public class GameOfLife {
 			time -= .04f;
 			updateStates();
 			anim++;
+			int speed = 16;
 			if(stepping && anim >= (fast ? speed / 4 : speed)) {
 				anim = 0;
 				step();
@@ -168,16 +167,6 @@ public class GameOfLife {
 
 	public void dispose() {
 		batch.dispose();
-	}
-
-	private class Move {
-		public final Vector2 pos;
-		public final int step;
-
-		public Move(Vector2 pos, int step) {
-			this.pos = pos;
-			this.step = step;
-		}
 	}
 }
 

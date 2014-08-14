@@ -8,9 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.thepaperpilot.screens.Title;
 
 public class Conway extends Game {
-	private static Game instance;
 	public static AssetManager manager;
 	public static Skin skin;
+	private static Game instance;
 
 	public static Game getGame() {
 		return instance;
