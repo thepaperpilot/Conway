@@ -101,10 +101,10 @@ public class Menu extends ConwayScreen {
 			initialCells.add(new Vector2(MathUtils.random(size.x), MathUtils.random(size.y)));
 		int objective = MathUtils.random(2);
 		if(objective == 0)
-			return new GameOfLife(size, initialCells, MathUtils.randomBoolean());
+			return new GameOfLife(size, initialCells, MathUtils.randomBoolean(), MathUtils.random(100));
 		while(MathUtils.random(targets.size()) < 5)
 			GameScreen.fillSquare(targets, new Vector2(MathUtils.random(size.x - 2), MathUtils.random(size.y - 2)), new Vector2(MathUtils.random(1, 2), MathUtils.random(1, 2)));
-		return new GameOfLife(size, initialCells, MathUtils.randomBoolean(), objective == 1, targets);
+		return new GameOfLife(size, initialCells, MathUtils.randomBoolean(), objective == 1, targets, MathUtils.random(100));
 	}
 
 	GameOfLife creative() {
@@ -142,16 +142,17 @@ public class Menu extends ConwayScreen {
 		for(Object obj : input) {
 			JSONObject jsonObject = (JSONObject) obj;
 			ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
+			Vector2 size = new Vector2(getInt(jsonObject, "x"), getInt(jsonObject, "y"));
 			for(Object t : (JSONArray) jsonObject.get("initial"))
-				initialCells.add(new Vector2(getInt((JSONObject) t, "x"), getInt((JSONObject) t, "y")));
+				initialCells.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
 			if(getInt(jsonObject, "objective") == 0) {
-				levels.add(new GameOfLife(new Vector2(getInt(jsonObject, "x"), getInt(jsonObject, "y")), initialCells, (Boolean) jsonObject.get("warping")));
+				levels.add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "clicks")));
 				continue;
 			}
 			ArrayList<Vector2> targets = new ArrayList<Vector2>();
 			for(Object t : (JSONArray) jsonObject.get("targets"))
-				targets.add(new Vector2(getInt((JSONObject) t, "x"), getInt((JSONObject) t, "y")));
-			levels.add(new GameOfLife(new Vector2(getInt(jsonObject, "x"), getInt(jsonObject, "y")), initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "objective") == 1, targets));
+				targets.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
+			levels.add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "objective") == 1, targets, getInt(jsonObject, "clicks")));
 		}
 		return levels;
 	}

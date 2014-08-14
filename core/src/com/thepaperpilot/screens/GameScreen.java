@@ -26,6 +26,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	private TextButton toggleStepping;
 	private TextButton stepFastForward;
 	private boolean won = false;
+	private Label clicksLabel;
 
 	public GameScreen(final GameOfLife game) {
 		this.game = game;
@@ -81,6 +82,17 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 			innerObjectiveTable.add(objectiveLabel);
 			objectiveTable.top().add(innerObjectiveTable);
 			stage.addActor(objectiveTable);
+		}
+		if(game.clicks != 0) {
+			Table clicksTable = new Table();
+			clicksTable.setFillParent(true);
+			Table innerClicksTable = new Table();
+			innerClicksTable.setBackground(Conway.skin.get("buttonUp", Drawable.class));
+			innerClicksTable.pad(5, 10, 5, 10);
+			clicksLabel = new Label(String.valueOf(game.clicks), Conway.skin);
+			innerClicksTable.add(clicksLabel);
+			clicksTable.top().left().add(innerClicksTable);
+			stage.addActor(clicksTable);
 		}
 		items.bottom().left();
 		items.add(toggleStepping).pad(2);
@@ -154,11 +166,13 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
-		if(game.getBounds().contains(x, Gdx.graphics.getHeight() - y)) {
+		if(game.getBounds().contains(x, Gdx.graphics.getHeight() - y) && game.clicks > 0) {
 			for(Cell[] row : game.grid) {
 				for(Cell cell : row) {
 					if(game.getCellBounds(cell).contains(x, Gdx.graphics.getHeight() - y)) {
 						game.toggle(cell);
+						game.clicks--;
+						clicksLabel.setText(String.valueOf(game.clicks));
 						return true;
 					}
 				}

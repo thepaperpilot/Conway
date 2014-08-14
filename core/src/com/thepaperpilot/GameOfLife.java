@@ -21,6 +21,7 @@ public class GameOfLife {
 	public final Cell[][] grid;
 	public final Vector3 pan = new Vector3(0, 0, 0);
 	private final SpriteBatch batch;
+	public int clicks = 0;
 	public Vector2 size;
 	public Objective objective;
 	public float zoom = .1f;
@@ -44,17 +45,19 @@ public class GameOfLife {
 		}
 	}
 
-	public GameOfLife(Vector2 size, ArrayList<Vector2> initialCells, boolean warping) {
+	public GameOfLife(Vector2 size, ArrayList<Vector2> initialCells, boolean warping, int clicks) {
 		this(size);
 		this.warping = warping;
+		this.clicks = clicks;
 		objective = Objective.get(grid);
 		for(Vector2 pos : initialCells) grid[((int) pos.x)][((int) pos.y)].live = true;
 	}
 
-	public GameOfLife(Vector2 size, ArrayList<Vector2> initialCells, boolean warping, boolean kill, ArrayList<Vector2> targets) {
+	public GameOfLife(Vector2 size, ArrayList<Vector2> initialCells, boolean warping, boolean kill, ArrayList<Vector2> targets, int clicks) {
 		this(size);
 		this.size = size;
 		this.warping = warping;
+		this.clicks = clicks;
 		this.objective = Objective.get(kill, targets, grid);
 		for(Vector2 pos : initialCells) grid[((int) pos.x)][((int) pos.y)].live = true;
 	}
