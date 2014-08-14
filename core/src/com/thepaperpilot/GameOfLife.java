@@ -24,14 +24,10 @@ public class GameOfLife {
 	public int step = 0;
 	private boolean warping;
 	public ArrayList<Vector2> targets;
-	//Used for replaying old games
-	private ArrayList<Vector2> initialCells;
-	private ArrayList<Move> moves = new ArrayList<Move>();
 	private static int speed = 16;
 
 	public GameOfLife(Vector2 size, ArrayList<Vector2> targets, ArrayList<Vector2> initialCells, boolean warping) {
 		this.targets = targets;
-		this.initialCells = initialCells;
 		this.warping = warping;
 		this.size = size;
 		batch = new SpriteBatch();
@@ -168,7 +164,6 @@ public class GameOfLife {
 	public void toggle(Cell cell) {
 		cell.live = !cell.live;
 		cell.next = cell.live;
-		moves.add(new Move(cell.pos.cpy(), step));
 	}
 
 	public void dispose() {

@@ -127,10 +127,8 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 				}
 			});
 			TextButton next = new TextButton("Next Level", Conway.skin);
-			TextButton replay = new TextButton("Save Replay", Conway.skin);
 			buttons.add(menu).pad(10).row();
-			buttons.add(next).pad(10).row();
-			buttons.add(replay).pad(10);
+			buttons.add(next).pad(10);
 			buttons.setColor(1, 1, 1, 0);
 			victory.addAction(Actions.sequence(Actions.parallel(Actions.scaleBy(2, 2, 2, Interpolation.elastic), Actions.fadeIn(2)), Actions.run(new Runnable() {
 				@Override
