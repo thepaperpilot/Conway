@@ -14,28 +14,23 @@ import java.util.ArrayList;
 public class GameOfLife {
 	public static final int cellSize = 200;
 	private static ArrayList<Sprite> states;
-	public final Vector2 size;
-	public final Cell[][] grid;
+	public Vector2 size;
+	public Cell[][] grid;
 	public final Vector3 pan = new Vector3(0, 0, 0);
-	public final ArrayList<Vector2> targets;
-	private final SpriteBatch batch;
-	private final boolean warping;
+	public Objective objective;
+	private SpriteBatch batch;
+	private boolean warping = true;
 	public float zoom = .1f;
 	private float time = 0;
 	private int anim = 0;
 
-	public GameOfLife(Vector2 size, ArrayList<Vector2> targets, ArrayList<Vector2> initialCells, boolean warping) {
-		this.targets = targets;
-		this.warping = warping;
+	public GameOfLife(Vector2 size) {
+		grid = new Cell[(int) size.x][(int) size.y];
 		this.size = size;
 		batch = new SpriteBatch();
-		grid = new Cell[(int) size.x][(int) size.y];
 		for(int i = 0; i < grid.length; i++)
 			for(int i2 = 0; i2 < grid[i].length; i2++)
 				grid[i][i2] = new Cell(new Vector2(i, i2));
-
-		for(Vector2 pos : targets) grid[((int) pos.x)][((int) pos.y)].target = true;
-		for(Vector2 pos : initialCells) grid[((int) pos.x)][((int) pos.y)].live = true;
 
 		if(states == null) {
 			states = new ArrayList<Sprite>();
@@ -43,6 +38,21 @@ public class GameOfLife {
 				states.add(sprite);
 			}
 		}
+	}
+
+	public GameOfLife(Vector2 size, ArrayList<Vector2> initialCells, boolean warping) {
+		this(size);
+		this.warping = warping;
+		objective = Objective.get(grid);
+		for(Vector2 pos : initialCells) grid[((int) pos.x)][((int) pos.y)].live = true;
+	}
+
+	public GameOfLife(Vector2 size, ArrayList<Vector2> initialCells, boolean warping, boolean kill, ArrayList<Vector2> targets) {
+		this(size);
+		this.size = size;
+		this.warping = warping;
+		this.objective = Objective.get(kill, targets, grid);
+		for(Vector2 pos : initialCells) grid[((int) pos.x)][((int) pos.y)].live = true;
 	}
 
 	public boolean update(float delta, boolean stepping, boolean fast) {
@@ -94,10 +104,6 @@ public class GameOfLife {
 					cell.state++;
 			}
 		}
-	}
-
-	public boolean checkCompletion() {
-		return false;
 	}
 
 	private int getNeighbors(Cell cell) {
@@ -167,6 +173,57 @@ public class GameOfLife {
 
 	public void dispose() {
 		batch.dispose();
+	}
+
+	public static class Objective {
+		public String objective = "";
+		Cell[][] grid;
+
+		public boolean checkCompletion() {
+			return false;
+		}
+
+		public Objective(String objective, Cell[][] grid) {
+			this.objective = objective;
+			this.grid = grid;
+		}
+
+		public static Objective get(Cell[][] grid) {
+			return new Objective("Kill the entire population", grid) {
+				@Override
+				public boolean checkCompletion() {
+					for(Cell[] row : grid)
+						for(Cell cell : row)
+							if(cell.live)
+								return false;
+					return true;
+				}
+			};
+		}
+
+		public static Objective get(boolean kill, final ArrayList<Vector2> targets, Cell[][] grid) {
+			for(Vector2 pos : targets) grid[((int) pos.x)][((int) pos.y)].target = true;
+			if(kill)
+				return new Objective("Kill all targets", grid) {
+					@Override
+					public boolean checkCompletion() {
+						for(Vector2 pos : targets)
+							if(grid[(int) pos.x][(int) pos.y].live)
+								return false;
+						return true;
+					}
+				};
+			else
+				return new Objective("Populate all targets", grid) {
+					@Override
+					public boolean checkCompletion() {
+						for(Vector2 pos : targets)
+							if(!grid[(int) pos.x][(int) pos.y].live)
+								return false;
+						return true;
+					}
+				};
+		}
 	}
 }
 

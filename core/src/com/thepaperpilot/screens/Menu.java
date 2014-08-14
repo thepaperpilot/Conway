@@ -11,17 +11,21 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.thepaperpilot.Cell;
 import com.thepaperpilot.Conway;
 import com.thepaperpilot.GameOfLife;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Menu extends ConwayScreen {
-	private String objective;
 	private GameOfLife background;
 
 	@Override
 	public void show() {
 		super.show();
-		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)), new ArrayList<Vector2>(), new ArrayList<Vector2>(), true);
+		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)));
 		Label title = new Label("Conway's Game of Life\nThe Game", Conway.skin, "large");
 		title.setAlignment(Align.center);
 		title.setColor(1, 0, 0, 1);
@@ -29,14 +33,14 @@ public class Menu extends ConwayScreen {
 		random.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		random.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				transition(new GameScreen(random(), objective));
+				transition(new GameScreen(random()));
 			}
 		});
 		TextButton creative = new TextButton("Creative", Conway.skin);
 		creative.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		creative.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				transition(new GameScreen(creative(), objective));
+				transition(new GameScreen(creative()));
 			}
 		});
 
@@ -59,61 +63,16 @@ public class Menu extends ConwayScreen {
 		ArrayList<Vector2> targets = new ArrayList<Vector2>();
 		for(int i = 0; i < initial; i++)
 			initialCells.add(new Vector2(MathUtils.random(size.x), MathUtils.random(size.y)));
+		int objective = MathUtils.random(2);
+		if(objective == 0)
+			return new GameOfLife(size, initialCells, MathUtils.randomBoolean());
 		while(MathUtils.random(targets.size()) < 5)
 			GameScreen.fillSquare(targets, new Vector2(MathUtils.random(size.x - 2), MathUtils.random(size.y - 2)), new Vector2(MathUtils.random(1, 2), MathUtils.random(1, 2)));
-		switch(MathUtils.random(3)) {
-			default:
-				objective = "Kill the entire population";
-				return new GameOfLife(size, new ArrayList<Vector2>(), initialCells, MathUtils.randomBoolean()) {
-					@Override
-					public boolean checkCompletion() {
-						for(Cell[] row : grid)
-							for(Cell cell : row)
-								if(cell.live)
-									return false;
-						return true;
-					}
-				};
-			case 1:
-				final int target = MathUtils.random(30, 50);
-				objective = "Reach a population of " + target;
-				return new GameOfLife(size, new ArrayList<Vector2>(), initialCells, MathUtils.randomBoolean()) {
-					@Override
-					public boolean checkCompletion() {
-						int pop = 0;
-						for(Vector2 pos : targets)
-							if(grid[(int) pos.x][(int) pos.y].live)
-								pop++;
-						return pop >= target;
-					}
-				};
-			case 2:
-				objective = "Kill all targets";
-				return new GameOfLife(size, targets, initialCells, MathUtils.randomBoolean()) {
-					@Override
-					public boolean checkCompletion() {
-						for(Vector2 pos : targets)
-							if(grid[(int) pos.x][(int) pos.y].live)
-								return false;
-						return true;
-					}
-				};
-			case 3:
-				objective = "Populate all targets";
-				return new GameOfLife(size, targets, initialCells, MathUtils.randomBoolean()) {
-					@Override
-					public boolean checkCompletion() {
-						for(Vector2 pos : targets)
-							if(!grid[(int) pos.x][(int) pos.y].live)
-								return false;
-						return true;
-					}
-				};
-		}
+		return new GameOfLife(size, initialCells, MathUtils.randomBoolean(), objective == 1, targets);
 	}
 
 	GameOfLife creative() {
-		return new GameOfLife(new Vector2(100, 100), new ArrayList<Vector2>(), new ArrayList<Vector2>(), true);
+		return new GameOfLife(new Vector2(100, 100));
 	}
 
 	@Override
@@ -129,5 +88,38 @@ public class Menu extends ConwayScreen {
 	@Override
 	public void dispose() {
 		background.dispose();
+	}
+
+	ArrayList<GameOfLife> getLevels() {
+		ArrayList<GameOfLife> levels = new ArrayList<GameOfLife>();
+		JSONParser parser = new JSONParser();
+		JSONArray input = null;
+		try {
+			input = (JSONArray) ((JSONObject) parser.parse(Gdx.files.internal("levels.json").reader())).get("levels");
+		} catch(IOException e) {
+			e.printStackTrace();
+		} catch(ParseException e) {
+			e.printStackTrace();
+		}
+		assert input != null;
+		for(Object obj : input) {
+			JSONObject jsonObject = (JSONObject) obj;
+			ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
+			for(Object t : (JSONArray) jsonObject.get("initial"))
+				initialCells.add(new Vector2(getInt((JSONObject) t, "x"), getInt((JSONObject) t, "y")));
+			if(getInt(jsonObject, "objective") == 0) {
+				levels.add(new GameOfLife(new Vector2(getInt(jsonObject, "x"), getInt(jsonObject, "y")), initialCells, (Boolean) jsonObject.get("warping")));
+				continue;
+			}
+			ArrayList<Vector2> targets = new ArrayList<Vector2>();
+			for(Object t : (JSONArray) jsonObject.get("targets"))
+				targets.add(new Vector2(getInt((JSONObject) t, "x"), getInt((JSONObject) t, "y")));
+			levels.add(new GameOfLife(new Vector2(getInt(jsonObject, "x"), getInt(jsonObject, "y")), initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "objective") == 1, targets));
+		}
+		return levels;
+	}
+
+	int getInt(JSONObject jsonObject, String key) {
+		return ((Number) jsonObject.get(key)).intValue();
 	}
 }

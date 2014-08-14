@@ -21,16 +21,14 @@ import java.util.ArrayList;
 
 public class GameScreen extends ConwayScreen implements GestureDetector.GestureListener {
 	private final GameOfLife game;
-	private final String objective;
 	private boolean stepping = false;
 	private boolean fast = false;
 	private TextButton toggleStepping;
 	private TextButton stepFastForward;
 	private boolean won = false;
 
-	public GameScreen(final GameOfLife game, String objective) {
+	public GameScreen(final GameOfLife game) {
 		this.game = game;
-		this.objective = objective;
 	}
 
 	public static void fillSquare(ArrayList<Vector2> cells, Vector2 pos, Vector2 size) {
@@ -68,18 +66,18 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 						stepFastForward.setText(fast ? "Slow" : "Fast");
 					} else {
 						game.step();
-						if(game.checkCompletion()) win();
+						if(game.objective != null && game.objective.checkCompletion()) win();
 					}
 				}
 			}
 		});
-		if(objective != null) {
+		if(game.objective != null) {
 			Table objectiveTable = new Table();
 			objectiveTable.setFillParent(true);
 			Table innerObjectiveTable = new Table();
 			innerObjectiveTable.setBackground(Conway.skin.get("buttonUp", Drawable.class));
 			innerObjectiveTable.pad(5, 10, 5, 10);
-			Label objectiveLabel = new Label(objective, Conway.skin);
+			Label objectiveLabel = new Label(game.objective.objective, Conway.skin);
 			innerObjectiveTable.add(objectiveLabel);
 			objectiveTable.top().add(innerObjectiveTable);
 			stage.addActor(objectiveTable);
@@ -105,7 +103,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	}
 
 	void update(float delta) {
-		if(game.update(delta, stepping, fast) && game.checkCompletion()) win();
+		if(game.update(delta, stepping, fast) && game.objective != null && game.objective.checkCompletion()) win();
 	}
 
 	private void win() {
