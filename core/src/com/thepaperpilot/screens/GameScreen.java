@@ -26,6 +26,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	private boolean fast = false;
 	private TextButton toggleStepping;
 	private TextButton stepFastForward;
+	private boolean won = false;
 
 	public GameScreen(final GameOfLife game, String objective) {
 		this.game = game;
@@ -43,20 +44,24 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		toggleStepping.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				stepping = !stepping;
-				toggleStepping.setText(stepping ? "Stop" : "Go");
-				stepFastForward.setText(stepping ? fast ? "Slow" : "Fast" : "Step");
+				if(!won) {
+					stepping = !stepping;
+					toggleStepping.setText(stepping ? "Stop" : "Go");
+					stepFastForward.setText(stepping ? fast ? "Slow" : "Fast" : "Step");
+				}
 			}
 		});
 		stepFastForward.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if(stepping) {
-					fast = !fast;
-					stepFastForward.setText(fast ? "Slow" : "Fast");
-				} else {
-					game.step();
-					if(game.checkCompletion()) win();
+				if(!won) {
+					if(stepping) {
+						fast = !fast;
+						stepFastForward.setText(fast ? "Slow" : "Fast");
+					} else {
+						game.step();
+						if(game.checkCompletion()) win();
+					}
 				}
 			}
 		});
@@ -104,41 +109,44 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	}
 
 	private void win() {
-		stepping = false;
-		Table victory = new Table();
-		victory.setTransform(true);
-		victory.setCenterPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 2 / 3);
-		victory.setColor(1, 1, 1, 0);
-		victory.setScale(.5f);
-		final Table buttons = new Table();
-		buttons.setCenterPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 3);
-		TextButton menu = new TextButton("Back to Menu", Conway.skin);
-		menu.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				transition(new Menu());
-			}
-		});
-		TextButton next = new TextButton("Next Level", Conway.skin);
-		TextButton replay = new TextButton("Save Replay", Conway.skin);
-		buttons.add(menu).pad(10).row();
-		buttons.add(next).pad(10).row();
-		buttons.add(replay).pad(10);
-		buttons.setColor(1, 1, 1, 0);
-		victory.addAction(Actions.sequence(Actions.parallel(Actions.scaleBy(2, 2, 2, Interpolation.elastic), Actions.fadeIn(2)), Actions.run(new Runnable() {
-			@Override
-			public void run() {
-				stage.addActor(buttons);
-				buttons.addAction(Actions.fadeIn(2));
-			}
-		})));
-		Label you = new Label("You", Conway.skin, "large");
-		Label win = new Label("Win!", Conway.skin, "large");
-		you.addAction(Actions.moveBy(-Gdx.graphics.getWidth() / 9, 0, 4, Interpolation.bounce));
-		win.addAction(Actions.moveBy(Gdx.graphics.getWidth() / 9, 0, 4, Interpolation.bounce));
-		victory.add(you).row();
-		victory.add(win);
-		stage.addActor(victory);
+		if(!won) {
+			won = true;
+			stepping = false;
+			Table victory = new Table();
+			victory.setTransform(true);
+			victory.setCenterPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 2 / 3);
+			victory.setColor(1, 1, 1, 0);
+			victory.setScale(.5f);
+			final Table buttons = new Table();
+			buttons.setCenterPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 3);
+			TextButton menu = new TextButton("Back to Menu", Conway.skin);
+			menu.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					transition(new Menu());
+				}
+			});
+			TextButton next = new TextButton("Next Level", Conway.skin);
+			TextButton replay = new TextButton("Save Replay", Conway.skin);
+			buttons.add(menu).pad(10).row();
+			buttons.add(next).pad(10).row();
+			buttons.add(replay).pad(10);
+			buttons.setColor(1, 1, 1, 0);
+			victory.addAction(Actions.sequence(Actions.parallel(Actions.scaleBy(2, 2, 2, Interpolation.elastic), Actions.fadeIn(2)), Actions.run(new Runnable() {
+				@Override
+				public void run() {
+					stage.addActor(buttons);
+					buttons.addAction(Actions.fadeIn(2));
+				}
+			})));
+			Label you = new Label("You", Conway.skin, "large");
+			Label win = new Label("Win!", Conway.skin, "large");
+			you.addAction(Actions.moveBy(-Gdx.graphics.getWidth() / 9, 0, 4, Interpolation.bounce));
+			win.addAction(Actions.moveBy(Gdx.graphics.getWidth() / 9, 0, 4, Interpolation.bounce));
+			victory.add(you).row();
+			victory.add(win);
+			stage.addActor(victory);
+		}
 	}
 
 	@Override
