@@ -1,9 +1,13 @@
 package com.thepaperpilot;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -57,13 +61,12 @@ public class GameOfLife {
 
 	public boolean update(float delta, boolean stepping, boolean fast) {
 		boolean stepped = false;
-		time += delta;
-		while(time > .04f) {
-			time -= .04f;
+		time += fast ? delta * 2 : delta;
+		while(time > .04) {
+			time -= .04;
 			updateStates();
 			anim++;
-			int speed = 16;
-			if(stepping && anim >= (fast ? speed / 4 : speed)) {
+			if(stepping && anim >= (fast ? 8 : 12)) {
 				anim = 0;
 				step();
 				stepped = true;
@@ -173,6 +176,16 @@ public class GameOfLife {
 
 	public void dispose() {
 		batch.dispose();
+	}
+
+	public Texture getTexture() {
+		FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth() / 6, Gdx.graphics.getWidth() / 6, false);
+		fbo.begin();
+		Gdx.gl.glClearColor(.5f, .5f, .5f, 0f);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		draw(1);
+		fbo.end();
+		return fbo.getColorBufferTexture();
 	}
 
 	public static class Objective {

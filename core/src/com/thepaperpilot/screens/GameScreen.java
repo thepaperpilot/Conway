@@ -124,7 +124,9 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 					transition(new Menu());
 				}
 			});
+			menu.pad(10);
 			TextButton next = new TextButton("Next Level", Conway.skin);
+			next.pad(10);
 			buttons.add(menu).pad(10).row();
 			buttons.add(next).pad(10);
 			buttons.setColor(1, 1, 1, 0);

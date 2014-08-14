@@ -1,11 +1,12 @@
 package com.thepaperpilot.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.thepaperpilot.Cell;
@@ -25,19 +26,53 @@ public class Menu extends ConwayScreen {
 	@Override
 	public void show() {
 		super.show();
+		Table levels = new Table();
+		for(final GameOfLife GoL : getLevels()) {
+			TextureRegion texture = new TextureRegion(GoL.getTexture());
+			texture.flip(false, true);
+			Image level = new Image(texture);
+			level.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					transition(new GameScreen(GoL));
+				}
+			});
+			Stack stack = new Stack();
+			Table bg = new Table();
+			bg.setBackground(Conway.skin.getDrawable("buttonDown"));
+			Table outerLevel = new Table();
+			outerLevel.add(level).pad(10);
+			stack.add(bg);
+			stack.add(outerLevel);
+			levels.add(stack).width(20 + Gdx.graphics.getWidth() / 6).height(20 + Gdx.graphics.getWidth() / 6).pad(5);
+		}
+
+		final ScrollPane carousel = new ScrollPane(levels, Conway.skin);
+		carousel.addListener(new ActorGestureListener() {
+			@Override
+			public void fling (InputEvent event, float velocityX, float velocityY, int button) {
+				carousel.setVelocityX(carousel.getVelocityX() + velocityX);
+			}
+
+			@Override
+			public void pan (InputEvent event, float x, float y, float deltaX, float deltaY) {
+				carousel.setScrollX(carousel.getScrollX() + deltaX);
+			}
+        });
+
 		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)));
 		Label title = new Label("Conway's Game of Life\nThe Game", Conway.skin, "large");
 		title.setAlignment(Align.center);
 		title.setColor(1, 0, 0, 1);
 		TextButton random = new TextButton("Random\nGame", Conway.skin);
-		random.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
+		random.pad(10);
 		random.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				transition(new GameScreen(random()));
 			}
 		});
 		TextButton creative = new TextButton("Creative", Conway.skin);
-		creative.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
+		creative.pad(10);
 		creative.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				transition(new GameScreen(creative()));
@@ -45,6 +80,7 @@ public class Menu extends ConwayScreen {
 		});
 
 		items.add(title).padBottom(40).row();
+		items.add(levels).width(Gdx.graphics.getWidth() - 100).padBottom(10).row();
 		items.add(random).padBottom(10).row();
 		items.add(creative);
 
@@ -77,11 +113,11 @@ public class Menu extends ConwayScreen {
 
 	@Override
 	public void update(float delta) {
-		background.update(delta, true, true);
-		for(int i = 0; i < 10; i++) {
-			Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
-			cell.live = true;
-		}
+		if(background.update(delta, true, true))
+			for(int i = 0; i < 100; i++) {
+				Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
+				cell.live = true;
+			}
 		background.draw(transition == null ? 1 : reverse ? 1f - transition.getTime() : transition.getTime());
 	}
 
