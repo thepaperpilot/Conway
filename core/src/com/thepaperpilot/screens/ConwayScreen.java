@@ -30,6 +30,12 @@ abstract class ConwayScreen implements Screen {
 		items.setFillParent(true);
 		stage = new Stage(new ScreenViewport());
 		stage.addActor(items);
+		/*stage.addAction(Actions.sequence(Actions.parallel(Actions.fadeOut(0), Actions.scaleBy(2, 2), Actions.moveTo(-Gdx.graphics.getWidth(), -Gdx.graphics.getHeight())), Actions.parallel(transition = Actions.fadeIn(.5f), Actions.scaleBy(-2, -2, .5f), Actions.moveTo(0, 0, .5f)), Actions.run(new Runnable() {
+			@Override
+			public void run() {
+				transition = null;
+			}
+		})));*/
 		stage.addAction(Actions.sequence(Actions.fadeOut(0), transition = Actions.fadeIn(.5f), Actions.run(new Runnable() {
 			@Override
 			public void run() {
@@ -42,6 +48,14 @@ abstract class ConwayScreen implements Screen {
 
 	void transition(final ConwayScreen screen) {
 		reverse = true;
+		/*stage.addAction(Actions.sequence(Actions.parallel(transition = Actions.fadeOut(.5f), Actions.scaleBy(-1, -1, .5f), Actions.moveTo(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, .5f)), Actions.run(new Runnable() {
+			@Override
+			public void run() {
+				reverse = false;
+				transition = null;
+				Conway.getGame().setScreen(screen);
+			}
+		})));*/
 		stage.addAction(Actions.sequence(transition = Actions.fadeOut(.5f), Actions.run(new Runnable() {
 			@Override
 			public void run() {
