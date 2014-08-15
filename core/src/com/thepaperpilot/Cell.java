@@ -21,4 +21,10 @@ public class Cell {
 	public void update() {
 		live = next;
 	}
+
+	public void setState(boolean live) {
+		this.live = live;
+		next = live;
+		state = live ? 0 : 6;
+	}
 }
