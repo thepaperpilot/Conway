@@ -115,7 +115,7 @@ public class Menu extends ConwayScreen {
 
 	@Override
 	public void update(float delta) {
-		if(background.update(delta, true, true))
+		if(background.update(delta, true, false))
 			for(int i = 0; i < 100; i++) {
 				Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
 				cell.live = true;
