@@ -1,7 +1,6 @@
 package com.thepaperpilot.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -28,9 +27,7 @@ public class Menu extends ConwayScreen {
 		super.show();
 		Table levels = new Table();
 		for(final GameOfLife GoL : getLevels()) {
-			TextureRegion texture = new TextureRegion(GoL.getTexture());
-			texture.flip(false, true);
-			Image level = new Image(texture);
+			Image level = GoL.getImage();
 			level.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
@@ -41,10 +38,10 @@ public class Menu extends ConwayScreen {
 			Table bg = new Table();
 			bg.setBackground(Conway.skin.getDrawable("buttonDown"));
 			Table outerLevel = new Table();
-			outerLevel.add(level).pad(10);
+			outerLevel.add(level).pad(3);
 			stack.add(bg);
 			stack.add(outerLevel);
-			levels.add(stack).width(20 + Gdx.graphics.getWidth() / 6).height(20 + Gdx.graphics.getWidth() / 6).pad(5);
+			levels.add(stack).width(6 + Gdx.graphics.getWidth() / 6).height(6 + Gdx.graphics.getWidth() / 6).pad(5);
 		}
 
 		final ScrollPane carousel = new ScrollPane(levels, Conway.skin);

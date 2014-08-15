@@ -3,19 +3,21 @@ package com.thepaperpilot;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import java.util.ArrayList;
 
 public class GameOfLife {
+	private FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 	public static final int cellSize = 200;
 	private static ArrayList<Sprite> states;
 	public final Cell[][] grid;
@@ -50,7 +52,11 @@ public class GameOfLife {
 		this.warping = warping;
 		this.clicks = clicks;
 		objective = Objective.get(grid);
-		for(Vector2 pos : initialCells) grid[((int) pos.x)][((int) pos.y)].live = true;
+		for(Vector2 pos : initialCells) {
+			grid[((int) pos.x)][((int) pos.y)].live = true;
+			grid[((int) pos.x)][((int) pos.y)].next = true;
+		}
+		setStates();
 	}
 
 	public GameOfLife(Vector2 size, ArrayList<Vector2> initialCells, boolean warping, boolean kill, ArrayList<Vector2> targets, int clicks) {
@@ -63,6 +69,7 @@ public class GameOfLife {
 			grid[((int) pos.x)][((int) pos.y)].live = true;
 			grid[((int) pos.x)][((int) pos.y)].next = true;
 		}
+		setStates();
 	}
 
 	public boolean update(float delta, boolean stepping, boolean fast) {
@@ -111,6 +118,14 @@ public class GameOfLife {
 					cell.state--;
 				if(!cell.live && cell.state != 6)
 					cell.state++;
+			}
+		}
+	}
+
+	private void setStates() {
+		for(Cell[] row : grid) {
+			for(Cell cell : row) {
+				cell.state = cell.live ? 0 : 6;
 			}
 		}
 	}
@@ -182,16 +197,27 @@ public class GameOfLife {
 
 	public void dispose() {
 		batch.dispose();
+		fbo.dispose();
 	}
 
-	public Texture getTexture() {
-		FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth() / 6, Gdx.graphics.getWidth() / 6, false);
+	public Image getImage() {
 		fbo.begin();
-		Gdx.gl.glClearColor(.5f, .5f, .5f, 0f);
+		Gdx.gl.glClearColor(.5f, .5f, .5f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		draw(1);
 		fbo.end();
-		return fbo.getColorBufferTexture();
+		TextureRegion texture = new TextureRegion(fbo.getColorBufferTexture());
+		Rectangle bounds = getBounds();
+		bounds.setX(bounds.getX() - 5);
+		bounds.setWidth(bounds.getWidth() + 10);
+		bounds.setY(bounds.getY() + 5);
+		bounds.setHeight(bounds.getHeight() + 10);
+		if(bounds.getWidth() > bounds.getHeight())
+			texture.setRegion((int) bounds.getX(), (int) (bounds.getY() - (bounds.getWidth() - bounds.getHeight()) / 2), (int) bounds.getWidth(), (int) bounds.getWidth());
+		else
+			texture.setRegion((int) (bounds.getX() + (bounds.getHeight() - bounds.getWidth()) / 2), (int) bounds.getY(), (int) bounds.getHeight(), (int) bounds.getHeight());
+		texture.flip(false, true);
+		return new Image(texture);
 	}
 
 	public static class Objective {
