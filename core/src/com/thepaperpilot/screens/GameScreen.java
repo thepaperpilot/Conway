@@ -83,7 +83,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 			objectiveTable.top().add(innerObjectiveTable);
 			stage.addActor(objectiveTable);
 		}
-		if(game.clicks != 0) {
+		if(game.clicks > 0) {
 			Table clicksTable = new Table();
 			clicksTable.setFillParent(true);
 			Table innerClicksTable = new Table();
@@ -166,13 +166,15 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
-		if(game.getBounds().contains(x, Gdx.graphics.getHeight() - y) && game.clicks > 0) {
+		if(game.getBounds().contains(x, Gdx.graphics.getHeight() - y) && (game.clicks > 0 || game.clicks == -1)) {
 			for(Cell[] row : game.grid) {
 				for(Cell cell : row) {
 					if(game.getCellBounds(cell).contains(x, Gdx.graphics.getHeight() - y)) {
 						game.toggle(cell);
-						game.clicks--;
-						clicksLabel.setText(String.valueOf(game.clicks));
+						if(game.clicks != -1) {
+							game.clicks--;
+							clicksLabel.setText(String.valueOf(game.clicks));
+						}
 						return true;
 					}
 				}

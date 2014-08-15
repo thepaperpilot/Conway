@@ -108,7 +108,9 @@ public class Menu extends ConwayScreen {
 	}
 
 	GameOfLife creative() {
-		return new GameOfLife(new Vector2(100, 100));
+		GameOfLife GoL = new GameOfLife(new Vector2(100, 100));
+		GoL.clicks = -1;
+		return GoL;
 	}
 
 	@Override
@@ -143,8 +145,9 @@ public class Menu extends ConwayScreen {
 			JSONObject jsonObject = (JSONObject) obj;
 			ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
 			Vector2 size = new Vector2(getInt(jsonObject, "x"), getInt(jsonObject, "y"));
-			for(Object t : (JSONArray) jsonObject.get("initial"))
+			for(Object t : (JSONArray) jsonObject.get("initial")) {
 				initialCells.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
+			}
 			if(getInt(jsonObject, "objective") == 0) {
 				levels.add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "clicks")));
 				continue;

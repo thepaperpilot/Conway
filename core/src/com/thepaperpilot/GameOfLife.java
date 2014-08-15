@@ -59,7 +59,10 @@ public class GameOfLife {
 		this.warping = warping;
 		this.clicks = clicks;
 		this.objective = Objective.get(kill, targets, grid);
-		for(Vector2 pos : initialCells) grid[((int) pos.x)][((int) pos.y)].live = true;
+		for(Vector2 pos : initialCells) {
+			grid[((int) pos.x)][((int) pos.y)].live = true;
+			grid[((int) pos.x)][((int) pos.y)].next = true;
+		}
 	}
 
 	public boolean update(float delta, boolean stepping, boolean fast) {
