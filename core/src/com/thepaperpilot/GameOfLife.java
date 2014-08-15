@@ -16,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import java.util.ArrayList;
 
-public class GameOfLife {
+public class GameOfLife implements Cloneable{
 	private FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 	public static final int cellSize = 200;
 	private static ArrayList<Sprite> states;
@@ -30,6 +30,7 @@ public class GameOfLife {
 	private boolean warping = true;
 	private float time = 0;
 	private int anim = 0;
+    public GameOfLife original;
 
 	public GameOfLife(Vector2 size) {
 		grid = new Cell[(int) size.x][(int) size.y];
@@ -45,6 +46,12 @@ public class GameOfLife {
 				states.add(sprite);
 			}
 		}
+
+        try {
+            original = (GameOfLife) this.clone();
+        } catch(CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
 	}
 
 	public GameOfLife(Vector2 size, ArrayList<Vector2> initialCells, boolean warping, int clicks) {
@@ -60,7 +67,7 @@ public class GameOfLife {
 	}
 
 	public GameOfLife(Vector2 size, ArrayList<Vector2> initialCells, boolean warping, boolean kill, ArrayList<Vector2> targets, int clicks) {
-		this(size);
+        this(size);
 		this.size = size;
 		this.warping = warping;
 		this.clicks = clicks;

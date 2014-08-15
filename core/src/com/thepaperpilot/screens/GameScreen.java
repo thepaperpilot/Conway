@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.thepaperpilot.Cell;
 import com.thepaperpilot.Conway;
 import com.thepaperpilot.GameOfLife;
-
 import java.util.ArrayList;
 
 public class GameScreen extends ConwayScreen implements GestureDetector.GestureListener {
@@ -25,6 +24,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	private boolean fast = false;
 	private TextButton toggleStepping;
 	private TextButton stepFastForward;
+    private TextButton resetLevel;
 	private boolean won = false;
 	private Label clicksLabel;
 
@@ -46,8 +46,10 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(new GestureDetector(this));
 		toggleStepping = new TextButton("Go", Conway.skin);
 		stepFastForward = new TextButton("Step", Conway.skin);
+        resetLevel = new TextButton("Reset", Conway.skin);
 		toggleStepping.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		stepFastForward.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
+        resetLevel.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
 		toggleStepping.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -72,6 +74,12 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 				}
 			}
 		});
+        resetLevel.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+            }
+        });
 		if(game.objective != null) {
 			Table objectiveTable = new Table();
 			objectiveTable.setFillParent(true);
@@ -97,6 +105,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		items.bottom().left();
 		items.add(toggleStepping).pad(2);
 		items.add(stepFastForward).pad(2);
+        items.add(resetLevel).pad(2);
 	}
 
 	@Override
