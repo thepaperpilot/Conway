@@ -91,7 +91,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 			innerClicksTable.pad(5, 10, 5, 10);
 			clicksLabel = new Label(String.valueOf(game.clicks), Conway.skin);
 			innerClicksTable.add(clicksLabel);
-			clicksTable.top().left().add(innerClicksTable);
+			clicksTable.top().right().add(innerClicksTable);
 			stage.addActor(clicksTable);
 		}
 		items.bottom().left();
