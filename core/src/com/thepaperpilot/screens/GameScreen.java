@@ -148,10 +148,18 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 				}
 			});
 			menu.pad(10);
-			TextButton next = new TextButton("Next Level", Conway.skin);
-			next.pad(10);
 			buttons.add(menu).pad(10).row();
-			buttons.add(next).pad(10);
+			if(game.index < Menu.levels.size() - 1 && game.index != -1) {
+				TextButton next = new TextButton("Next Level", Conway.skin);
+				next.addListener(new ClickListener() {
+					@Override
+					public void clicked(InputEvent event, float x, float y) {
+						transition(new GameScreen(Menu.getLevels().get(game.index + 1)));
+					}
+				});
+				next.pad(10);
+				buttons.add(next).pad(10);
+			}
 			buttons.setColor(1, 1, 1, 0);
 			victory.addAction(Actions.sequence(Actions.parallel(Actions.scaleBy(2, 2, 2, Interpolation.elastic), Actions.fadeIn(2)), Actions.run(new Runnable() {
 				@Override
