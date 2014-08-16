@@ -1,7 +1,6 @@
 package com.thepaperpilot;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -204,21 +203,21 @@ public class GameOfLife implements Cloneable{
 
 	public Image getImage(boolean expand) {
 		fbo.begin();
-		Gdx.gl.glClearColor(.5f, .5f, .5f, 1f);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		draw();
 		fbo.end();
 		TextureRegion texture = new TextureRegion(fbo.getColorBufferTexture());
 		Rectangle bounds = getBounds();
 		bounds.setX(bounds.getX() - 5);
 		bounds.setWidth(bounds.getWidth() + 10);
-		bounds.setY(bounds.getY() + 5);
+		bounds.setY(bounds.getY() - 5);
 		bounds.setHeight(bounds.getHeight() + 10);
 		if(expand) {
 			if(bounds.getWidth() > bounds.getHeight())
 				texture.setRegion((int) bounds.getX(), (int) (bounds.getY() - (bounds.getWidth() - bounds.getHeight()) / 2), (int) bounds.getWidth(), (int) bounds.getWidth());
-			else
+			else if(bounds.getHeight() > bounds.getWidth())
 				texture.setRegion((int) (bounds.getX() + (bounds.getHeight() - bounds.getWidth()) / 2), (int) bounds.getY(), (int) bounds.getHeight(), (int) bounds.getHeight());
+			else
+				texture.setRegion((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
 		} else
 			texture.setRegion((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
 		texture.flip(false, true);
