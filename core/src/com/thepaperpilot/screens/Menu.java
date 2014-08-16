@@ -21,17 +21,18 @@ import java.util.ArrayList;
 
 public class Menu extends ConwayScreen {
 	private GameOfLife background;
+	public static ArrayList<GameOfLife> levels = getLevels();
 
 	@Override
 	public void show() {
 		super.show();
 		Table levels = new Table();
-		for(final GameOfLife GoL : getLevels()) {
+		for(final GameOfLife GoL : Menu.levels) {
 			Image level = GoL.getImage(true);
 			level.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					transition(new GameScreen(GoL));
+					transition(new GameScreen(getLevels().get(Menu.levels.indexOf(GoL))));
 				}
 			});
 			Stack stack = new Stack();
@@ -98,10 +99,10 @@ public class Menu extends ConwayScreen {
 			initialCells.add(new Vector2(MathUtils.random(size.x), MathUtils.random(size.y)));
 		int objective = MathUtils.random(2);
 		if(objective == 0)
-			return new GameOfLife(size, initialCells, MathUtils.randomBoolean(), MathUtils.random(100));
+			return new GameOfLife(size, initialCells, MathUtils.randomBoolean(), MathUtils.random(100), -1);
 		while(MathUtils.random(targets.size()) < 5)
 			GameScreen.fillSquare(targets, new Vector2(MathUtils.random(size.x - 2), MathUtils.random(size.y - 2)), new Vector2(MathUtils.random(1, 2), MathUtils.random(1, 2)));
-		return new GameOfLife(size, initialCells, MathUtils.randomBoolean(), objective == 1, targets, MathUtils.random(100));
+		return new GameOfLife(size, initialCells, MathUtils.randomBoolean(), objective == 1, targets, MathUtils.random(100), -1);
 	}
 
 	GameOfLife creative() {
@@ -134,7 +135,7 @@ public class Menu extends ConwayScreen {
 		background.dispose();
 	}
 
-	ArrayList<GameOfLife> getLevels() {
+	static ArrayList<GameOfLife> getLevels() {
 		ArrayList<GameOfLife> levels = new ArrayList<GameOfLife>();
 		JSONParser parser = new JSONParser();
 		JSONArray input = null;
@@ -146,6 +147,7 @@ public class Menu extends ConwayScreen {
 			e.printStackTrace();
 		}
 		assert input != null;
+		int index = 0;
 		for(Object obj : input) {
 			JSONObject jsonObject = (JSONObject) obj;
 			ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
@@ -154,18 +156,19 @@ public class Menu extends ConwayScreen {
 				initialCells.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
 			}
 			if(getInt(jsonObject, "objective") == 0) {
-				levels.add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "clicks")));
+				levels.add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "clicks"), index));
 				continue;
 			}
 			ArrayList<Vector2> targets = new ArrayList<Vector2>();
 			for(Object t : (JSONArray) jsonObject.get("targets"))
 				targets.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
-			levels.add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "objective") == 1, targets, getInt(jsonObject, "clicks")));
+			levels.add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "objective") == 1, targets, getInt(jsonObject, "clicks"), index));
+			index++;
 		}
 		return levels;
 	}
 
-	int getInt(JSONObject jsonObject, String key) {
+	static int getInt(JSONObject jsonObject, String key) {
 		return ((Number) jsonObject.get(key)).intValue();
 	}
 }
