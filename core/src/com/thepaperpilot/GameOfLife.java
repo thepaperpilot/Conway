@@ -178,14 +178,13 @@ public class GameOfLife implements Cloneable{
 		return new Rectangle((Gdx.graphics.getWidth() / 2) - (size.x * cellSize) / 2 * zoom + (pan.x + cellSize * cell.pos.x) * zoom, (Gdx.graphics.getHeight() / 2) - (size.y * cellSize) / 2 * zoom + (pan.y + cellSize * cell.pos.y) * zoom, cellSize * zoom, cellSize * zoom);
 	}
 
-	public void draw(float alpha) {
+	public void draw() {
 		Matrix4 transform = new Matrix4();
 		transform.translate((Gdx.graphics.getWidth() - (zoom * size.x * GameOfLife.cellSize)) / 2, (Gdx.graphics.getHeight() - (zoom * size.y * GameOfLife.cellSize)) / 2, 0);
 		transform.scl(zoom);
 		transform.translate(pan);
 		batch.setTransformMatrix(transform);
 		batch.begin();
-		batch.setColor(1, 1, 1, alpha);
 		for(int i = 0; i < grid.length; i++) {
 			for(int i2 = 0; i2 < grid[i].length; i2++) {
 				Cell cell = grid[i][i2];
@@ -203,15 +202,15 @@ public class GameOfLife implements Cloneable{
 	}
 
 	public void dispose() {
-		batch.dispose();
+		//batch.dispose(); Causing rendering issues on android :/
 		fbo.dispose();
 	}
 
-	public Image getImage() {
+	public Image getImage(boolean expand) {
 		fbo.begin();
 		Gdx.gl.glClearColor(.5f, .5f, .5f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		draw(1);
+		draw();
 		fbo.end();
 		TextureRegion texture = new TextureRegion(fbo.getColorBufferTexture());
 		Rectangle bounds = getBounds();
@@ -219,12 +218,17 @@ public class GameOfLife implements Cloneable{
 		bounds.setWidth(bounds.getWidth() + 10);
 		bounds.setY(bounds.getY() + 5);
 		bounds.setHeight(bounds.getHeight() + 10);
-		if(bounds.getWidth() > bounds.getHeight())
-			texture.setRegion((int) bounds.getX(), (int) (bounds.getY() - (bounds.getWidth() - bounds.getHeight()) / 2), (int) bounds.getWidth(), (int) bounds.getWidth());
-		else
-			texture.setRegion((int) (bounds.getX() + (bounds.getHeight() - bounds.getWidth()) / 2), (int) bounds.getY(), (int) bounds.getHeight(), (int) bounds.getHeight());
+		if(expand) {
+			if(bounds.getWidth() > bounds.getHeight())
+				texture.setRegion((int) bounds.getX(), (int) (bounds.getY() - (bounds.getWidth() - bounds.getHeight()) / 2), (int) bounds.getWidth(), (int) bounds.getWidth());
+			else
+				texture.setRegion((int) (bounds.getX() + (bounds.getHeight() - bounds.getWidth()) / 2), (int) bounds.getY(), (int) bounds.getHeight(), (int) bounds.getHeight());
+		} else
+			texture.setRegion((int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
 		texture.flip(false, true);
-		return new Image(texture);
+		Image image = new Image(texture);
+		image.setPosition(bounds.getX(), bounds.getY());
+		return image;
 	}
 
 	public static class Objective {

@@ -119,8 +119,9 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	public void render(float delta) {
 		update(delta);
 		stage.act(delta);
-		game.draw(transition == null ? 1 : reverse ? 1f - transition.getTime() : transition.getTime());
+		stage.getActors().insert(0, game.getImage(false));
 		stage.draw();
+		stage.getActors().removeIndex(0);
 	}
 
 	void update(float delta) {

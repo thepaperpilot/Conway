@@ -27,7 +27,7 @@ public class Menu extends ConwayScreen {
 		super.show();
 		Table levels = new Table();
 		for(final GameOfLife GoL : getLevels()) {
-			Image level = GoL.getImage();
+			Image level = GoL.getImage(true);
 			level.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
@@ -117,7 +117,15 @@ public class Menu extends ConwayScreen {
 				Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
 				cell.live = true;
 			}
-		background.draw(transition == null ? 1 : reverse ? 1f - transition.getTime() : transition.getTime());
+	}
+
+	@Override
+	public void render(float delta) {
+		update(delta);
+		stage.act(delta);
+		stage.getActors().insert(0, background.getImage(false));
+		stage.draw();
+		stage.getActors().removeIndex(0);
 	}
 
 	@Override
