@@ -48,7 +48,7 @@ public class Title extends ConwayScreen {
 	public void update(float delta) {
 		if(Conway.manager.update()) {
 			time += delta;
-			instructions.setColor(1, 1, 1, Math.abs(MathUtils.cos(time)));
+			instructions.setColor(1, 1, 1, Math.abs(MathUtils.sin(time)));
 
 
 			if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) || Gdx.input.justTouched()) {
