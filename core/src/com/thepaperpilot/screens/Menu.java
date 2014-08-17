@@ -69,20 +69,16 @@ public class Menu extends ConwayScreen {
 		Table levels = new Table();
 		for(final GameOfLife GoL : Menu.levels) {
 			Image level = GoL.getImage(true);
-			level.addListener(new ClickListener() {
+			Table outerLevel = new Table();
+			outerLevel.add(level).width(Gdx.graphics.getWidth() / 6).height(Gdx.graphics.getWidth() / 6);
+			outerLevel.setBackground(Conway.skin.getDrawable("buttonDown"));
+			levels.add(outerLevel).pad(4);
+			outerLevel.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					transition(new GameScreen(getLevels().get(Menu.levels.indexOf(GoL))));
 				}
 			});
-			Stack stack = new Stack();
-			Table bg = new Table();
-			bg.setBackground(Conway.skin.getDrawable("buttonDown"));
-			Table outerLevel = new Table();
-			outerLevel.add(level).pad(3);
-			stack.add(bg);
-			stack.add(outerLevel);
-			levels.add(stack).width(6 + Gdx.graphics.getWidth() / 6).height(6 + Gdx.graphics.getWidth() / 6).pad(5);
 		}
 
 		final ScrollPane carousel = new ScrollPane(levels, Conway.skin);
