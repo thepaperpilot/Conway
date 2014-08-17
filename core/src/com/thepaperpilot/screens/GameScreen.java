@@ -73,7 +73,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 			Table innerClicksTable = new Table();
 			innerClicksTable.setBackground(Conway.skin.get("buttonUp", Drawable.class));
 			innerClicksTable.pad(5, 10, 5, 10);
-			clicksLabel = new Label(String.valueOf(game.clicks), Conway.skin);
+			clicksLabel = new Label(String.valueOf(game.clicks), Conway.skin, "large");
 			innerClicksTable.add(clicksLabel);
 			clicksTable.top().right().add(innerClicksTable);
 			stage.addActor(clicksTable);
