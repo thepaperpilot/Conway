@@ -3,12 +3,12 @@
     {
       "initial": [
         {
-          "x": 1,
-          "y": 1
+          "x": -1,
+          "y": -1
         },
         {
           "x": 0,
-          "y": 1
+          "y": -1
         }
       ],
       "targets": [
@@ -17,8 +17,8 @@
           "y": 0
         }
       ],
-      "x": 20,
-      "y": 10,
+      "x": 4,
+      "y": 4,
       "clicks": 1,
       "warping": true,
       "objective": 2
@@ -88,8 +88,8 @@
           "y": -3
         }
       ],
-      "x": 20,
-      "y": 10,
+      "x": 9,
+      "y": 9,
       "clicks": 1,
       "warping": true,
       "objective": 2

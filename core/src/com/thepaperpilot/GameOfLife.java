@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class GameOfLife implements Cloneable{
 	public int index;
-	private FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+	private final FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
 	public static final int cellSize = 200;
 	private static ArrayList<Sprite> states;
 	public final Cell[][] grid;
@@ -174,7 +174,7 @@ public class GameOfLife implements Cloneable{
 		return new Rectangle((Gdx.graphics.getWidth() / 2) - (size.x * cellSize) / 2 * zoom + (pan.x + cellSize * cell.pos.x) * zoom, (Gdx.graphics.getHeight() / 2) - (size.y * cellSize) / 2 * zoom + (pan.y + cellSize * cell.pos.y) * zoom, cellSize * zoom, cellSize * zoom);
 	}
 
-	public void draw() {
+	void draw() {
 		Matrix4 transform = new Matrix4();
 		transform.translate((Gdx.graphics.getWidth() - (zoom * size.x * GameOfLife.cellSize)) / 2, (Gdx.graphics.getHeight() - (zoom * size.y * GameOfLife.cellSize)) / 2, 0);
 		transform.scl(zoom);

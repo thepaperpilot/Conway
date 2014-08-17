@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.thepaperpilot.Cell;
 import com.thepaperpilot.Conway;
 import com.thepaperpilot.GameOfLife;
-import java.util.ArrayList;
 
 public class GameScreen extends ConwayScreen implements GestureDetector.GestureListener {
 	private final GameOfLife game;
@@ -31,22 +30,14 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		this.game = game;
 	}
 
-	public static void fillSquare(ArrayList<Vector2> cells, Vector2 pos, Vector2 size) {
-		for(int i = (int) pos.x; i < pos.x + size.x; i++) {
-			for(int i2 = (int) pos.y; i2 < pos.y + size.y; i2++) {
-				cells.add(new Vector2(i, i2));
-			}
-		}
-	}
-
 	@Override
 	public void show() {
 		super.show();
 		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(new GestureDetector(this));
 		toggleStepping = new TextButton("Go", Conway.skin);
 		stepFastForward = new TextButton("Step", Conway.skin);
-		toggleStepping.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
-		stepFastForward.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
+		toggleStepping.pad(10).padTop(20).padBottom(20);
+		stepFastForward.pad(10).padTop(20).padBottom(20);
 		toggleStepping.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -94,7 +85,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 			stage.addActor(clicksTable);
 		}
 		items.bottom().left();
-		items.add(toggleStepping).pad(2);
+		items.add(toggleStepping).pad(2).fill().row();
 		items.add(stepFastForward).pad(2);
 		if(game.index != -1) {
 			TextButton resetLevel = new TextButton("Reset", Conway.skin);
@@ -105,7 +96,11 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 					transition(new GameScreen(Menu.getLevels().get(game.index)));
 				}
 			});
-			items.add(resetLevel).pad(2);
+			resetLevel.pad(10).padTop(20).padBottom(20);
+			Table reset = new Table();
+			reset.setFillParent(true);
+			reset.bottom().right().add(resetLevel).pad(2);
+			stage.addActor(reset);
 		}
 	}
 
@@ -148,7 +143,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 				}
 			});
 			menu.pad(10);
-			buttons.add(menu).pad(10).row();
+			buttons.add(menu).pad(10).padTop(20).padBottom(20).row();
 			if(game.index < Menu.levels.size() - 1 && game.index != -1) {
 				TextButton next = new TextButton("Next Level", Conway.skin);
 				next.addListener(new ClickListener() {
@@ -158,7 +153,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 					}
 				});
 				next.pad(10);
-				buttons.add(next).pad(10);
+				buttons.add(next).pad(10).padTop(20).padBottom(20);
 			}
 			buttons.setColor(1, 1, 1, 0);
 			victory.addAction(Actions.sequence(Actions.parallel(Actions.scaleBy(2, 2, 2, Interpolation.elastic), Actions.fadeIn(2)), Actions.run(new Runnable() {

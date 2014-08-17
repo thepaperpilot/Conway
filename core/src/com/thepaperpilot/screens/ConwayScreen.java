@@ -13,7 +13,6 @@ import com.thepaperpilot.Input;
 abstract class ConwayScreen implements Screen {
 	Stage stage;
 	Table items;
-	boolean reverse = false;
 
 	@Override
 	public void resize(int width, int height) {
@@ -30,11 +29,9 @@ abstract class ConwayScreen implements Screen {
 	}
 
 	void transition(final ConwayScreen screen) {
-		reverse = true;
 		stage.addAction(Actions.sequence(Actions.parallel(Actions.fadeOut(.5f), Actions.scaleBy(-1, -1, .5f), Actions.moveTo(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, .5f)), Actions.run(new Runnable() {
 			@Override
 			public void run() {
-				reverse = false;
 				Conway.getGame().setScreen(screen);
 			}
 		})));
