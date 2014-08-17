@@ -69,13 +69,14 @@ public class Menu extends ConwayScreen {
 		Table levels = new Table();
 		for(final GameOfLife GoL : Menu.levels) {
 			Image level = GoL.getImage(true);
-			Table outerLevel = new Table();
-			outerLevel.add(level).width(Gdx.graphics.getWidth() / 6).height(Gdx.graphics.getWidth() / 6);
-			outerLevel.setBackground(Conway.skin.getDrawable("buttonDown"));
-			levels.add(outerLevel).pad(4);
+			Button outerLevel = new Button(Conway.skin);
+			outerLevel.add(level);
+			levels.add(outerLevel).width(Gdx.graphics.getWidth() / 6).height(Gdx.graphics.getWidth() / 6).pad(4);
 			outerLevel.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
+					if(Conway.sound)
+						Conway.manager.get("step.wav", Sound.class).play();
 					transition(new GameScreen(getLevels().get(Menu.levels.indexOf(GoL))));
 				}
 			});
