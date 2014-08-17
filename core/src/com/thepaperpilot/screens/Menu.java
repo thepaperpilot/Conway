@@ -1,6 +1,8 @@
 package com.thepaperpilot.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.thepaperpilot.Cell;
 import com.thepaperpilot.Conway;
+import com.thepaperpilot.ConwayButton;
 import com.thepaperpilot.GameOfLife;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -99,19 +102,36 @@ public class Menu extends ConwayScreen {
 		Label title = new Label("Conway's Game of Life\nThe Game", Conway.skin, "large");
 		title.setAlignment(Align.center);
 		title.setColor(1, 0, 0, 1);
-		TextButton creative = new TextButton("Creative", Conway.skin);
-		creative.pad(10).padTop(20).padBottom(20);
-		creative.addListener(new ClickListener() {
-			public void clicked(InputEvent event, float x, float y) {
+		ConwayButton creative = new ConwayButton("Creative") {
+			@Override
+			public void clicked() {
 				transition(new GameScreen(creative()));
 			}
-		});
+		};
 
 		items.add(title).padBottom(40).row();
 		items.add(levels).width(Gdx.graphics.getWidth() - 100).padBottom(10).row();
 		items.add(creative);
 
-		stage.getActors().reverse();
+		final Button soundButton = new Button(Conway.skin, "transparent");
+		soundButton.add(new Image(Conway.manager.get(Conway.sound ? "soundOn.png" : "soundOff.png", Texture.class)));
+		soundButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				Conway.sound = !Conway.sound;
+				soundButton.clearChildren();
+				soundButton.add(new Image(Conway.manager.get(Conway.sound ? "soundOn.png" : "soundOff.png", Texture.class)));
+				if(Conway.sound) {
+					Conway.bgm.play();
+					Conway.manager.get("step.wav", Sound.class).play();
+				} else
+					Conway.bgm.stop();
+			}
+		});
+		Table sound = new Table();
+		sound.setFillParent(true);
+		sound.bottom().right().add(soundButton).pad(10);
+		stage.addActor(sound);
 
 		for(int i = 0; i < 1000; i++) {
 			Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
@@ -119,7 +139,7 @@ public class Menu extends ConwayScreen {
 		}
 	}
 
-	GameOfLife creative() {
+	static GameOfLife creative() {
 		GameOfLife GoL = new GameOfLife(new Vector2(40, 40));
 		GoL.clicks = -1;
 		return GoL;

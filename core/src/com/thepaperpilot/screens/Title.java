@@ -2,6 +2,8 @@ package com.thepaperpilot.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -36,6 +38,10 @@ public class Title extends ConwayScreen {
 
 		//Load the rest of the assets
 		Conway.manager.load("states.atlas", TextureAtlas.class);
+		Conway.manager.load("soundOn.png", Texture.class);
+		Conway.manager.load("soundOff.png", Texture.class);
+		Conway.manager.load("step.wav", Sound.class);
+		Conway.manager.load("bgm.ogg", Music.class);
 	}
 
 	@Override
@@ -46,6 +52,10 @@ public class Title extends ConwayScreen {
 
 
 			if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) || Gdx.input.justTouched()) {
+				Conway.bgm = Conway.manager.get("bgm.ogg", Music.class);
+				Conway.bgm.setVolume(.5f);
+				Conway.bgm.setLooping(true);
+				Conway.bgm.play();
 				transition(new Menu());
 			}
 		}

@@ -6,23 +6,21 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.thepaperpilot.Cell;
 import com.thepaperpilot.Conway;
+import com.thepaperpilot.ConwayButton;
 import com.thepaperpilot.GameOfLife;
 
 public class GameScreen extends ConwayScreen implements GestureDetector.GestureListener {
 	private final GameOfLife game;
 	private boolean stepping = false;
 	private boolean fast = false;
-	private TextButton toggleStepping;
-	private TextButton stepFastForward;
+	private ConwayButton toggleStepping;
+	private ConwayButton stepFastForward;
 	private boolean won = false;
 	private Label clicksLabel;
 
@@ -34,23 +32,19 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 	public void show() {
 		super.show();
 		((InputMultiplexer) Gdx.input.getInputProcessor()).addProcessor(new GestureDetector(this));
-		toggleStepping = new TextButton("Go", Conway.skin);
-		stepFastForward = new TextButton("Step", Conway.skin);
-		toggleStepping.pad(10).padTop(20).padBottom(20);
-		stepFastForward.pad(10).padTop(20).padBottom(20);
-		toggleStepping.addListener(new ClickListener() {
+		toggleStepping = new ConwayButton("Go") {
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void clicked() {
 				if(!won) {
 					stepping = !stepping;
 					toggleStepping.setText(stepping ? "Stop" : "Go");
 					stepFastForward.setText(stepping ? fast ? "Slow" : "Fast" : "Step");
 				}
 			}
-		});
-		stepFastForward.addListener(new ClickListener() {
+		};
+		stepFastForward = new ConwayButton("Step") {
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void clicked() {
 				if(!won) {
 					if(stepping) {
 						fast = !fast;
@@ -61,7 +55,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 					}
 				}
 			}
-		});
+		};
 		if(game.objective != null) {
 			Table objectiveTable = new Table();
 			objectiveTable.setFillParent(true);
@@ -87,21 +81,16 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		items.bottom().left();
 		items.add(toggleStepping).pad(2).fill().row();
 		items.add(stepFastForward).pad(2);
-		if(game.index != -1) {
-			TextButton resetLevel = new TextButton("Reset", Conway.skin);
-			resetLevel.pad(Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f, Gdx.graphics.getHeight() / 100f, Gdx.graphics.getWidth() / 100f);
-			resetLevel.addListener(new ClickListener() {
-				@Override
-				public void clicked(InputEvent event, float x, float y) {
-					transition(new GameScreen(Menu.getLevels().get(game.index)));
-				}
-			});
-			resetLevel.pad(10).padTop(20).padBottom(20);
-			Table reset = new Table();
-			reset.setFillParent(true);
-			reset.bottom().right().add(resetLevel).pad(2);
-			stage.addActor(reset);
-		}
+		ConwayButton resetLevel = new ConwayButton("Reset") {
+			@Override
+			public void clicked() {
+				transition(new GameScreen(game.clicks == -1 ? Menu.creative() : Menu.getLevels().get(game.index)));
+			}
+		};
+		Table reset = new Table();
+		reset.setFillParent(true);
+		reset.bottom().right().add(resetLevel).pad(2);
+		stage.addActor(reset);
 	}
 
 	@Override
@@ -135,25 +124,21 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 			victory.setScale(.5f);
 			final Table buttons = new Table();
 			buttons.setCenterPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 3);
-			TextButton menu = new TextButton("Back to Menu", Conway.skin);
-			menu.addListener(new ClickListener() {
+			ConwayButton menu = new ConwayButton("Back to Menu") {
 				@Override
-				public void clicked(InputEvent event, float x, float y) {
+				public void clicked() {
 					transition(new Menu());
 				}
-			});
-			menu.pad(10);
-			buttons.add(menu).pad(10).padTop(20).padBottom(20).row();
+			};
+			buttons.add(menu).pad(10).row();
 			if(game.index < Menu.levels.size() - 1 && game.index != -1) {
-				TextButton next = new TextButton("Next Level", Conway.skin);
-				next.addListener(new ClickListener() {
+				ConwayButton next = new ConwayButton("Next Level") {
 					@Override
-					public void clicked(InputEvent event, float x, float y) {
+					public void clicked() {
 						transition(new GameScreen(Menu.getLevels().get(game.index + 1)));
 					}
-				});
-				next.pad(10);
-				buttons.add(next).pad(10).padTop(20).padBottom(20);
+				};
+				buttons.add(next).pad(10);
 			}
 			buttons.setColor(1, 1, 1, 0);
 			victory.addAction(Actions.sequence(Actions.parallel(Actions.scaleBy(2, 2, 2, Interpolation.elastic), Actions.fadeIn(2)), Actions.run(new Runnable() {
