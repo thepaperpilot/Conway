@@ -84,7 +84,7 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		ConwayButton resetLevel = new ConwayButton("Reset") {
 			@Override
 			public void clicked() {
-				transition(new GameScreen(game.clicks == -1 ? Menu.creative() : Menu.getLevels().get(game.index)));
+				transition(new GameScreen(game.clicks == -1 ? Menu.creative() : Menu.levels.get(Menu.tab).get(game.index).copy()));
 			}
 		};
 		Table reset = new Table();
@@ -117,6 +117,8 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 		if(!won) {
 			won = true;
 			stepping = false;
+			Menu.levels.get(Menu.tab).get(game.index).completed = true;
+			Menu.writeData();
 			Table victory = new Table();
 			victory.setTransform(true);
 			victory.setCenterPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() * 2 / 3);
@@ -131,11 +133,19 @@ public class GameScreen extends ConwayScreen implements GestureDetector.GestureL
 				}
 			};
 			buttons.add(menu).pad(10).row();
-			if(game.index < Menu.levels.size() - 1 && game.index != -1) {
+			if(game.index < Menu.levels.get(Menu.tab).size() - 1 && game.index != -1) {
 				ConwayButton next = new ConwayButton("Next Level") {
 					@Override
 					public void clicked() {
-						transition(new GameScreen(Menu.getLevels().get(game.index + 1)));
+						transition(new GameScreen(Menu.levels.get(Menu.tab).get(game.index + 1).copy()));
+					}
+				};
+				buttons.add(next).pad(10);
+			} else if(game.index != -1 && Menu.tab < Menu.levels.size()) {
+				ConwayButton next = new ConwayButton("Next Level") {
+					@Override
+					public void clicked() {
+						transition(new GameScreen(Menu.levels.get(Menu.tab++).get(0).copy()));
 					}
 				};
 				buttons.add(next).pad(10);

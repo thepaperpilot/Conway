@@ -40,6 +40,7 @@ public class Title extends ConwayScreen {
 		Conway.manager.load("states.atlas", TextureAtlas.class);
 		Conway.manager.load("soundOn.png", Texture.class);
 		Conway.manager.load("soundOff.png", Texture.class);
+		Conway.manager.load("check.png", Texture.class);
 		Conway.manager.load("step.wav", Sound.class);
 		Conway.manager.load("bgm.ogg", Music.class);
 	}
@@ -55,7 +56,6 @@ public class Title extends ConwayScreen {
 				Conway.bgm = Conway.manager.get("bgm.ogg", Music.class);
 				Conway.bgm.setVolume(.5f);
 				Conway.bgm.setLooping(true);
-				Conway.bgm.play();
 				transition(new Menu());
 			}
 		}

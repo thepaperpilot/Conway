@@ -11,9 +11,9 @@ import com.thepaperpilot.screens.Title;
 public class Conway extends Game {
 	public static AssetManager manager;
 	public static Skin skin;
-	private static Game instance;
 	public static boolean sound;
 	public static Music bgm;
+	private static Game instance;
 
 	public static Game getGame() {
 		return instance;

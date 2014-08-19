@@ -16,26 +16,32 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import java.util.ArrayList;
 
-public class GameOfLife implements Cloneable{
-	public int index;
-	private final FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+public class GameOfLife {
 	public static final int cellSize = 200;
 	private static ArrayList<Sprite> states;
-	public final Cell[][] grid;
 	public final Vector3 pan = new Vector3(0, 0, 0);
-	private final SpriteBatch batch;
+	private final FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+	private final SpriteBatch batch = new SpriteBatch();
+	public boolean completed = false;
+	public int index;
+	public Cell[][] grid;
 	public int clicks = 0;
 	public Vector2 size;
 	public Objective objective;
 	public float zoom = .1f;
+	private boolean kill;
+	private ArrayList<Vector2> targets;
+	private boolean targetObjective = false;
 	private boolean warping = true;
 	private float time = 0;
 	private int anim = 0;
 
+	private GameOfLife() {
+	}
+
 	public GameOfLife(Vector2 size) {
 		grid = new Cell[(int) size.x][(int) size.y];
 		this.size = size;
-		batch = new SpriteBatch();
 		for(int i = 0; i < grid.length; i++)
 			for(int i2 = 0; i2 < grid[i].length; i2++)
 				grid[i][i2] = new Cell(new Vector2(i, i2));
@@ -62,17 +68,34 @@ public class GameOfLife implements Cloneable{
 	}
 
 	public GameOfLife(Vector2 size, ArrayList<Vector2> initialCells, boolean warping, boolean kill, ArrayList<Vector2> targets, int clicks, int index) {
-        this(size);
+		this(size);
 		this.size = size;
 		this.warping = warping;
 		this.clicks = clicks;
 		this.index = index;
 		this.objective = Objective.get(kill, targets, grid);
+		targetObjective = true;
+		this.kill = kill;
+		this.targets = targets;
 		for(Vector2 pos : initialCells) {
 			grid[((int) pos.x)][((int) pos.y)].live = true;
 			grid[((int) pos.x)][((int) pos.y)].next = true;
 		}
 		setStates();
+	}
+
+	public GameOfLife copy() {
+		GameOfLife output = new GameOfLife();
+		output.grid = new Cell[grid.length][grid[0].length];
+		for(int i = 0; i < output.grid.length; i++)
+			for(int i2 = 0; i2 < output.grid[i].length; i2++)
+				output.grid[i][i2] = new Cell(grid[i][i2]);
+		output.objective = targetObjective ? Objective.get(kill, targets, output.grid) : Objective.get(output.grid);
+		output.size = size.cpy();
+		output.warping = warping;
+		output.clicks = clicks;
+		output.index = index;
+		return output;
 	}
 
 	public boolean update(float delta, boolean stepping, boolean fast) {

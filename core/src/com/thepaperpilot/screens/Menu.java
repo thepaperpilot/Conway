@@ -23,11 +23,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Menu extends ConwayScreen {
-	public static final ArrayList<GameOfLife> levels = getLevels();
+	public static final ArrayList<ArrayList<GameOfLife>> levels = getLevels();
+	public static int tab = 0;
 	private GameOfLife background;
 
-	static ArrayList<GameOfLife> getLevels() {
-		ArrayList<GameOfLife> levels = new ArrayList<GameOfLife>();
+	private static ArrayList<ArrayList<GameOfLife>> getLevels() {
+		ArrayList<ArrayList<GameOfLife>> levels = new ArrayList<ArrayList<GameOfLife>>();
 		JSONParser parser = new JSONParser();
 		JSONArray input = null;
 		try {
@@ -39,49 +40,121 @@ public class Menu extends ConwayScreen {
 		}
 		assert input != null;
 		int index = 0;
-		for(Object obj : input) {
-			JSONObject jsonObject = (JSONObject) obj;
-			ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
-			Vector2 size = new Vector2(getInt(jsonObject, "x"), getInt(jsonObject, "y"));
-			for(Object t : (JSONArray) jsonObject.get("initial")) {
-				initialCells.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
+		for(int i = 0; i < input.size(); i++) {
+			levels.add(new ArrayList<GameOfLife>());
+			for(Object obj : (JSONArray) input.get(i)) {
+				JSONObject jsonObject = (JSONObject) obj;
+				ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
+				Vector2 size = new Vector2(getInt(jsonObject, "x"), getInt(jsonObject, "y"));
+				for(Object t : (JSONArray) jsonObject.get("initial")) {
+					initialCells.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
+				}
+				if(getInt(jsonObject, "objective") == 0) {
+					levels.get(i).add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "clicks"), index));
+					continue;
+				}
+				ArrayList<Vector2> targets = new ArrayList<Vector2>();
+				for(Object t : (JSONArray) jsonObject.get("targets"))
+					targets.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
+				levels.get(i).add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "objective") == 1, targets, getInt(jsonObject, "clicks"), index));
+				index++;
 			}
-			if(getInt(jsonObject, "objective") == 0) {
-				levels.add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "clicks"), index));
-				continue;
-			}
-			ArrayList<Vector2> targets = new ArrayList<Vector2>();
-			for(Object t : (JSONArray) jsonObject.get("targets"))
-				targets.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
-			levels.add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "objective") == 1, targets, getInt(jsonObject, "clicks"), index));
-			index++;
 		}
+		return setChecked(levels);
+	}
+
+	private static ArrayList<ArrayList<GameOfLife>> setChecked(ArrayList<ArrayList<GameOfLife>> levels) {
+		JSONParser parser = new JSONParser();
+		JSONObject input = null;
+		if(!Gdx.files.local("data.json").exists())
+			createData();
+		try {
+			input = (JSONObject) parser.parse(Gdx.files.local("data.json").reader());
+		} catch(IOException e) {
+			e.printStackTrace();
+		} catch(ParseException e) {
+			e.printStackTrace();
+		}
+		assert input != null;
+		JSONArray checks = (JSONArray) input.get("levels");
+		if(checks != null)
+			for(Object obj : checks) {
+				JSONObject jsonObject = (JSONObject) obj;
+				levels.get(getInt(jsonObject, "tab")).get(getInt(jsonObject, "n")).completed = true;
+			}
+		Conway.sound = (Boolean) input.get("sound");
+		if(Conway.sound) Conway.bgm.play();
 		return levels;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void createData() {
+		JSONObject data = new JSONObject();
+		data.put("sound", Conway.sound);
+		JSONArray checks = new JSONArray();
+		data.put("levels", checks);
+		Gdx.files.local("data.json").writeString(data.toJSONString(), false);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void writeData() {
+		JSONObject data = new JSONObject();
+		data.put("sound", Conway.sound);
+		JSONArray checks = new JSONArray();
+		for(int i = 0; i < levels.size(); i++) {
+			for(int i2 = 0; i2 < levels.get(i).size(); i2++) {
+				if(levels.get(i).get(i2).completed) {
+					JSONObject JSONlevel = new JSONObject();
+					JSONlevel.put("tab", i);
+					JSONlevel.put("n", i2);
+					checks.add(JSONlevel);
+				}
+			}
+		}
+		data.put("levels", checks);
+		Gdx.files.local("data.json").writeString(data.toJSONString(), false);
 	}
 
 	private static int getInt(JSONObject jsonObject, String key) {
 		return ((Number) jsonObject.get(key)).intValue();
 	}
 
-	@Override
-	public void show() {
-		super.show();
+	static GameOfLife creative() {
+		GameOfLife GoL = new GameOfLife(new Vector2(40, 40));
+		GoL.clicks = -1;
+		return GoL;
+	}
+
+	Table levelSelector(int tab) {
 		Table levels = new Table();
-		for(final GameOfLife GoL : Menu.levels) {
+		for(final GameOfLife GoL : Menu.levels.get(tab)) {
 			Image level = GoL.getImage(true);
 			Button outerLevel = new Button(Conway.skin);
 			outerLevel.add(level);
-			levels.add(outerLevel).width(Gdx.graphics.getWidth() / 6).height(Gdx.graphics.getWidth() / 6).pad(4);
+			if(GoL.completed) {
+				Table check = new Table();
+				check.top().right().add(new Image(Conway.manager.get("check.png", Texture.class)));
+				Stack outerOuterLevel = new Stack();
+				outerOuterLevel.add(outerLevel);
+				outerOuterLevel.add(check);
+				levels.add(outerOuterLevel).width(Gdx.graphics.getWidth() / 6).height(Gdx.graphics.getWidth() / 6).pad(4);
+			} else levels.add(outerLevel).width(Gdx.graphics.getWidth() / 6).height(Gdx.graphics.getWidth() / 6).pad(4);
 			outerLevel.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
 					if(Conway.sound)
 						Conway.manager.get("step.wav", Sound.class).play();
-					transition(new GameScreen(getLevels().get(Menu.levels.indexOf(GoL))));
+					transition(new GameScreen(GoL.copy()));
 				}
 			});
 		}
+		return levels;
+	}
 
+	@Override
+	public void show() {
+		super.show();
+		Table levels = levelSelector(tab);
 		final ScrollPane carousel = new ScrollPane(levels, Conway.skin);
 		carousel.addListener(new ActorGestureListener() {
 			@Override
@@ -123,7 +196,8 @@ public class Menu extends ConwayScreen {
 					Conway.bgm.play();
 					Conway.manager.get("step.wav", Sound.class).play();
 				} else
-					Conway.bgm.stop();
+					Conway.bgm.pause();
+				writeData();
 			}
 		});
 		Table sound = new Table();
@@ -135,12 +209,6 @@ public class Menu extends ConwayScreen {
 			Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
 			cell.live = true;
 		}
-	}
-
-	static GameOfLife creative() {
-		GameOfLife GoL = new GameOfLife(new Vector2(40, 40));
-		GoL.clicks = -1;
-		return GoL;
 	}
 
 	@Override

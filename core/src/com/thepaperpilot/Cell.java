@@ -18,13 +18,16 @@ public class Cell {
 		this.pos = pos;
 	}
 
+	public Cell(Cell cell) {
+		this.pos = cell.pos.cpy();
+		this.live = cell.live;
+		this.next = cell.next;
+		this.target = cell.target;
+		this.state = cell.state;
+	}
+
 	public void update() {
 		live = next;
 	}
 
-	public void setState(boolean live) {
-		this.live = live;
-		next = live;
-		state = live ? 0 : 6;
-	}
 }
