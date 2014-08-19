@@ -96,9 +96,10 @@ public class Menu extends ConwayScreen {
 		});
 
 		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)));
-		Label title = new Label("Conway's Game of Life\nThe Game", Conway.skin, "large");
+		Label title = new Label("Conway", Conway.skin, "large");
 		title.setAlignment(Align.center);
-		title.setColor(1, 0, 0, 1);
+		title.setFontScale(5);
+		title.setColor(.7f, .7f, .7f, 1);
 		ConwayButton creative = new ConwayButton("Creative") {
 			@Override
 			public void clicked() {
