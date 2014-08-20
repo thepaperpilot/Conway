@@ -19,6 +19,6 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	large: { font: large, fontColor: white }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
-	default: { hScrollKnob: buttonUp, background: buttonUp, hScroll: buttonDown }
+	default: { }
 }
 }

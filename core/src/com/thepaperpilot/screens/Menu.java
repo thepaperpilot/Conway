@@ -39,25 +39,23 @@ public class Menu extends ConwayScreen {
 			e.printStackTrace();
 		}
 		assert input != null;
-		int index = 0;
 		for(int i = 0; i < input.size(); i++) {
 			levels.add(new ArrayList<GameOfLife>());
-			for(Object obj : (JSONArray) input.get(i)) {
-				JSONObject jsonObject = (JSONObject) obj;
+			for(int i2 = 0; i2 < ((JSONArray) input.get(i)).size(); i2++) {
+				JSONObject jsonObject = (JSONObject) ((JSONArray) input.get(i)).get(i2);
 				ArrayList<Vector2> initialCells = new ArrayList<Vector2>();
 				Vector2 size = new Vector2(getInt(jsonObject, "x"), getInt(jsonObject, "y"));
 				for(Object t : (JSONArray) jsonObject.get("initial")) {
 					initialCells.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
 				}
 				if(getInt(jsonObject, "objective") == 0) {
-					levels.get(i).add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "clicks"), index));
+					levels.get(i).add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "clicks"), i2));
 					continue;
 				}
 				ArrayList<Vector2> targets = new ArrayList<Vector2>();
 				for(Object t : (JSONArray) jsonObject.get("targets"))
 					targets.add(new Vector2(getInt((JSONObject) t, "x") + size.x / 2, getInt((JSONObject) t, "y") + size.y / 2));
-				levels.get(i).add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "objective") == 1, targets, getInt(jsonObject, "clicks"), index));
-				index++;
+				levels.get(i).add(new GameOfLife(size, initialCells, (Boolean) jsonObject.get("warping"), getInt(jsonObject, "objective") == 1, targets, getInt(jsonObject, "clicks"), i2));
 			}
 		}
 		return setChecked(levels);
@@ -125,9 +123,9 @@ public class Menu extends ConwayScreen {
 		return GoL;
 	}
 
-	Table levelSelector(int tab) {
+	Table levelSelector() {
 		Table levels = new Table();
-		for(final GameOfLife GoL : Menu.levels.get(tab)) {
+		for(final GameOfLife GoL : Menu.levels.get(Menu.tab)) {
 			Image level = GoL.getImage(true);
 			Button outerLevel = new Button(Conway.skin);
 			outerLevel.add(level);
@@ -151,11 +149,42 @@ public class Menu extends ConwayScreen {
 		return levels;
 	}
 
-	@Override
-	public void show() {
-		super.show();
-		Table levels = levelSelector(tab);
-		final ScrollPane carousel = new ScrollPane(levels, Conway.skin);
+	public void createStage() {
+		Table tabs = new Table();
+		ConwayButton tuts = new ConwayButton("Tutorial") {
+			@Override
+			public void clicked() {
+				tab = 0;
+				createStage();
+			}
+		};
+		ConwayButton easy = new ConwayButton("Easy") {
+			@Override
+			public void clicked() {
+				tab = 1;
+				createStage();
+			}
+		};
+		ConwayButton medium = new ConwayButton("Medium") {
+			@Override
+			public void clicked() {
+				tab = 2;
+				createStage();
+			}
+		};
+		ConwayButton hard = new ConwayButton("Hard") {
+			@Override
+			public void clicked() {
+				tab = 3;
+				createStage();
+			}
+		};
+		tabs.add(tuts).pad(5);
+		tabs.add(easy).pad(5);
+		tabs.add(medium).pad(5);
+		tabs.add(hard).pad(5);
+
+		final ScrollPane carousel = new ScrollPane(levelSelector(), Conway.skin);
 		carousel.addListener(new ActorGestureListener() {
 			@Override
 			public void fling(InputEvent event, float velocityX, float velocityY, int button) {
@@ -168,7 +197,6 @@ public class Menu extends ConwayScreen {
 			}
 		});
 
-		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)));
 		Label title = new Label("Conway", Conway.skin, "large");
 		title.setAlignment(Align.center);
 		title.setFontScale(5);
@@ -180,8 +208,12 @@ public class Menu extends ConwayScreen {
 			}
 		};
 
+		stage.getActors().clear();
+		items = new Table();
+		items.setFillParent(true);
 		items.add(title).padBottom(40).row();
-		items.add(levels).width(Gdx.graphics.getWidth() - 100).padBottom(10).row();
+		items.add(tabs).row();
+		items.add(carousel).width(Gdx.graphics.getWidth() - 100).padBottom(30).row();
 		items.add(creative);
 
 		final Button soundButton = new Button(Conway.skin, "transparent");
@@ -203,8 +235,18 @@ public class Menu extends ConwayScreen {
 		Table sound = new Table();
 		sound.setFillParent(true);
 		sound.bottom().right().add(soundButton).pad(10);
-		stage.addActor(sound);
 
+		stage.addActor(items);
+		stage.addActor(sound);
+	}
+
+	@Override
+	public void show() {
+		super.show();
+
+		createStage();
+
+		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)));
 		for(int i = 0; i < 1000; i++) {
 			Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
 			cell.live = true;
