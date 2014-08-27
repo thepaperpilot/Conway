@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
@@ -26,6 +27,7 @@ public class Menu extends ConwayScreen {
 	public static final ArrayList<ArrayList<GameOfLife>> levels = getLevels();
 	public static int tab = 0;
 	private GameOfLife background;
+	Image bg;
 
 	private static ArrayList<ArrayList<GameOfLife>> getLevels() {
 		ArrayList<ArrayList<GameOfLife>> levels = new ArrayList<ArrayList<GameOfLife>>();
@@ -150,6 +152,7 @@ public class Menu extends ConwayScreen {
 	}
 
 	public void createStage() {
+		bg = new Image();
 		Table tabs = new Table();
 		ConwayButton tuts = new ConwayButton("Tutorial") {
 			@Override
@@ -236,8 +239,10 @@ public class Menu extends ConwayScreen {
 		sound.setFillParent(true);
 		sound.bottom().right().add(soundButton).pad(10);
 
+		stage.addActor(bg);
 		stage.addActor(items);
 		stage.addActor(sound);
+		addAction();
 	}
 
 	@Override
@@ -246,7 +251,7 @@ public class Menu extends ConwayScreen {
 
 		createStage();
 
-		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * Gdx.graphics.getWidth() / GameOfLife.cellSize), MathUtils.ceil(10 * Gdx.graphics.getHeight() / GameOfLife.cellSize)));
+		background = new GameOfLife(new Vector2(MathUtils.ceil(10 * (Gdx.graphics.getWidth() + 100) / GameOfLife.cellSize), MathUtils.ceil(10 * (Gdx.graphics.getHeight() + 100) / GameOfLife.cellSize)));
 		for(int i = 0; i < 1000; i++) {
 			Cell cell = background.grid[MathUtils.random(background.grid.length - 1)][MathUtils.random(background.grid[0].length - 1)];
 			cell.live = true;
@@ -266,6 +271,7 @@ public class Menu extends ConwayScreen {
 	public void render(float delta) {
 		update(delta);
 		stage.act(delta);
+		background.pan.set(bg.getX() / background.zoom, bg.getY() / background.zoom, 0);
 		stage.getActors().insert(0, background.getImage(false));
 		stage.draw();
 		stage.getActors().removeIndex(0);
@@ -275,5 +281,14 @@ public class Menu extends ConwayScreen {
 	public void hide() {
 		super.hide();
 		background.dispose();
+	}
+
+	void addAction() {
+		bg.addAction(Actions.sequence(Actions.moveTo(MathUtils.random(100) - 50, MathUtils.random(100) - 50, MathUtils.random(2.0f, 4.0f)), Actions.run(new Runnable() {
+			@Override
+			public void run() {
+				addAction();
+			}
+		})));
 	}
 }
