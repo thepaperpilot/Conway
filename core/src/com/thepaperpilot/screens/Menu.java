@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
@@ -28,6 +27,7 @@ public class Menu extends ConwayScreen {
 	public static int tab = 0;
 	private GameOfLife background;
 	Image bg;
+	private float angle = 0;
 
 	private static ArrayList<ArrayList<GameOfLife>> getLevels() {
 		ArrayList<ArrayList<GameOfLife>> levels = new ArrayList<ArrayList<GameOfLife>>();
@@ -242,7 +242,6 @@ public class Menu extends ConwayScreen {
 		stage.addActor(bg);
 		stage.addActor(items);
 		stage.addActor(sound);
-		addAction();
 	}
 
 	@Override
@@ -271,7 +270,8 @@ public class Menu extends ConwayScreen {
 	public void render(float delta) {
 		update(delta);
 		stage.act(delta);
-		background.pan.set(bg.getX() / background.zoom, bg.getY() / background.zoom, 0);
+		angle += delta / 2;
+		background.pan.set(50 * MathUtils.sin(angle) / background.zoom, 50 * MathUtils.cos(angle) / background.zoom, 0);
 		stage.getActors().insert(0, background.getImage(false));
 		stage.draw();
 		stage.getActors().removeIndex(0);
@@ -281,14 +281,5 @@ public class Menu extends ConwayScreen {
 	public void hide() {
 		super.hide();
 		background.dispose();
-	}
-
-	void addAction() {
-		bg.addAction(Actions.sequence(Actions.moveTo(MathUtils.random(100) - 50, MathUtils.random(100) - 50, MathUtils.random(2.0f, 4.0f)), Actions.run(new Runnable() {
-			@Override
-			public void run() {
-				addAction();
-			}
-		})));
 	}
 }
